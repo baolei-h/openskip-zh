@@ -1,6 +1,6 @@
-# Packet Lessons (W5 to W13)
+# Packet Lessons (W5 to W14)
 
-Generic lessons from patch-factory packets W5 to W13 (9 to 10 Oct 2026). Mirrored in both
+Generic lessons from patch-factory packets W5 to W14 (9 to 11 Oct 2026). Mirrored in both
 repositories; each copy arrives by that repository's own pull request.
 
 ## Controllers
@@ -41,3 +41,6 @@ repositories; each copy arrives by that repository's own pull request.
 - Wrapping a shell step changes its environment, signals included: under pipefail, `cmd | grep -q`
   fails with 141 once SIGPIPE is default. Test checks with the wrapper, not only alone.
 - A pre-check must be no stricter than the step it predicts. Read a past success log first.
+- A detector matches message lines only; strip data (names, values) before matching words.
+- A proposal parked in a review doc is not work: schedule it in open work the day it lands, or decline it.
+- Any hand-kept list of workflows, apps or seats gets a test against the real files.
