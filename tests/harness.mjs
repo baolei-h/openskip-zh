@@ -44,6 +44,7 @@ export function loadBackground({ fetchImpl, storage = {}, ctxExtra = {}, overrid
   const calls = [];
   const ctx = {
     console, URL, URLSearchParams, TextEncoder, crypto: globalThis.crypto,
+    AbortController: globalThis.AbortController, btoa: globalThis.btoa, atob: globalThis.atob,
     setTimeout, clearTimeout, setInterval, clearInterval, Promise, Date, Math, JSON,
     fetch: async (url, opts) => { calls.push({ url: String(url), opts }); return fetchImpl ? fetchImpl(String(url), opts) : fakeResponse(404, {}); },
   };

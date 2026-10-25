@@ -608,14 +608,14 @@ test('supabase: the setup script no longer makes ss_put_creds and drops it on ol
 });
 
 // ── Release 1.13.0 ────────────────────────────────────────────────────────────
-test('release: 1.13.0 in all 7 places and updates.json', () => {
-  const v = '1.13.0';
+test('release: 1.13.1 in all 7 places and updates.json', () => {
+  const v = '1.13.1';
   assert.equal(JSON.parse(read('manifest.json')).version, v);
   assert.equal(JSON.parse(read('manifest-chrome.json')).version, v);
   assert.ok(read('popup.js').startsWith('/* SkipStream - popup v' + v + ' */'));
   assert.ok(read('popup.css').startsWith('/* SkipStream popup - v' + v));
   assert.ok(read('README.md').includes('version-' + v + '-green') && read('README.md').includes('releases/tag/v' + v));
-  assert.match(read('CHANGELOG.md'), new RegExp('^# Changelog\\n\\n## \\[' + v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\] - 2026-10-05\\n'));
+  assert.match(read('CHANGELOG.md'), new RegExp('^# Changelog\\n\\n## \\[' + v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\] - 2026-10-25\\n'));
   const u = JSON.parse(read('updates.json')).addons['skipstream@extension'].updates;
   assert.equal(u[u.length - 1].version, v);
   assert.ok(u[u.length - 1].update_link.endsWith('/v' + v + '/skipstream-' + v + '-firefox.zip'));

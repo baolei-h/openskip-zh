@@ -49,6 +49,9 @@ const S = {
   sbModes:            'sbModes',
   showTimeline:       'showTimeline',
   skipNotice:         'skipNotice',
+  wdUrl:              'wdUrl',
+  wdUser:             'wdUser',
+  wdPass:             'wdPass',
 };
 
 const DENY = new Set([
@@ -66,6 +69,9 @@ const DENY = new Set([
   'skipstream_offline_queue',
   'ss_tab_state',
   'skipstream_error_log',
+  'wdUrl',
+  'wdUser',
+  'wdPass',
 ]);
 
 const $ = id => document.getElementById(id);
@@ -664,6 +670,9 @@ async function loadCredentials() {
   if ($('supabaseUrl'))      $('supabaseUrl').value      = data[S.supabaseUrl]      || '';
   if ($('supabaseAnonKey'))  $('supabaseAnonKey').value  = data[S.supabaseAnonKey]  || '';
   if ($('tmdbApiKey'))       $('tmdbApiKey').value       = data[S.tmdbApiKey]       || '';
+  if ($('wdUrl'))            $('wdUrl').value            = data[S.wdUrl]            || '';
+  if ($('wdUser'))           $('wdUser').value           = data[S.wdUser]           || '';
+  if ($('wdPass'))           $('wdPass').value           = data[S.wdPass]           || '';
 
   const asEnabled = !!data[S.animeSkipEnabled];
   if ($('animeSkipEnabled')) {
@@ -741,6 +750,84 @@ if (saveIntrodbBtn) {
     saveIntrodbBtn.disabled = false;
     saveIntrodbBtn.textContent = 'Save & Verify';
     if (key) showAlert($('alert-introdb'), 'ok', 'IntroDB 密钥已保存。');
+  });
+}
+
+// -- 云同步：坚果云 WebDAV --
+function fmtAgo(ts) {
+  const m = Math.max(0, Math.floor((Date.now() - (Number(ts) || 0)) / 60000));
+  if (m < 1) return '刚刚';
+  if (m < 60) return m + ' 分钟前';
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + ' 小时前';
+  return Math.floor(h / 24) + ' 天前';
+}
+
+async function renderWdStatus() {
+  const el = $('wdStatus');
+  if (!el) return;
+  const d = await br.storage.local.get([S.wdUrl, S.wdUser, S.wdPass, 'wd_state']);
+  if (!(d[S.wdUrl] && d[S.wdUser] && d[S.wdPass])) {
+    el.textContent = '未配置：观看记录只保存在本机。';
+    return;
+  }
+  const st = d.wd_state || {};
+  if (st.error) { el.textContent = '上次同步失败：' + st.error; return; }
+  if (!st.at)   { el.textContent = '已配置，等待首次同步。'; return; }
+  el.textContent = `上次同步：${fmtAgo(st.at)}，云端 ${st.count || 0} 条记录。`;
+}
+
+const saveWebdavBtn = $('saveWebdav');
+if (saveWebdavBtn) {
+  saveWebdavBtn.addEventListener('click', async () => {
+    let url = ($('wdUrl').value || '').trim() || 'https://dav.jianguoyun.com/dav';
+    const user = ($('wdUser').value || '').trim();
+    const pass = $('wdPass') ? $('wdPass').value : '';
+    if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+    url = url.replace(/\/+$/, '');
+    let host = '';
+    try { host = new URL(url).hostname; } catch (_) { host = ''; }
+    if (!user || !pass) { showAlert($('alert-webdav'), 'err', '请填写坚果云邮箱和应用密码。'); return; }
+    if (host !== 'dav.jianguoyun.com') {
+      showAlert($('alert-webdav'), 'err', '目前只支持坚果云，服务器地址请填 https://dav.jianguoyun.com/dav 。');
+      return;
+    }
+    saveWebdavBtn.disabled = true;
+    setSpinnerLabel(saveWebdavBtn, '验证中…');
+    const r = await bgSend({ type: 'WD_TEST', url, user, pass });
+    saveWebdavBtn.disabled = false;
+    saveWebdavBtn.textContent = '保存并验证';
+    if (!r || !r.ok) { showAlert($('alert-webdav'), 'err', '连接失败：' + (r?.err || '未知错误')); return; }
+    await br.storage.local.set({ [S.wdUrl]: url, [S.wdUser]: user, [S.wdPass]: pass, wd_settings_at: Date.now() });
+    showAlert($('alert-webdav'), 'ok', '已连接，正在合并记录…');
+    const sync = await bgSend({ type: 'WD_SYNC_NOW' });
+    renderWdStatus();
+    if (sync && sync.ok) showAlert($('alert-webdav'), 'ok', `同步完成，云端共 ${sync.count} 条记录。`);
+    else showAlert($('alert-webdav'), 'warn', '已保存，但同步失败：' + (sync?.err || '未知错误'));
+  });
+}
+
+const wdSyncNowBtn = $('wdSyncNow');
+if (wdSyncNowBtn) {
+  wdSyncNowBtn.addEventListener('click', async () => {
+    wdSyncNowBtn.disabled = true;
+    setSpinnerLabel(wdSyncNowBtn, '同步中…');
+    const r = await bgSend({ type: 'WD_SYNC_NOW' });
+    wdSyncNowBtn.disabled = false;
+    wdSyncNowBtn.textContent = '立即同步';
+    if (r && r.ok) showAlert($('alert-webdav'), 'ok', `同步完成，云端共 ${r.count} 条记录。`);
+    else showAlert($('alert-webdav'), 'warn', '同步失败：' + (r?.err || '未配置'));
+    renderWdStatus();
+  });
+}
+
+const wdClearBtn = $('wdClear');
+if (wdClearBtn) {
+  wdClearBtn.addEventListener('click', async () => {
+    await br.storage.local.remove([S.wdUrl, S.wdUser, S.wdPass]);
+    if ($('wdPass')) $('wdPass').value = '';
+    showAlert($('alert-webdav'), 'warn', '已关闭云同步，本机记录不受影响。');
+    renderWdStatus();
   });
 }
 
@@ -1365,7 +1452,19 @@ async function loadHistory(data) {
   const syncDot  = $('syncDot');
   const syncText = $('syncText');
 
-  if (url && key) {
+  const wdReady = !!(data[S.wdUrl] && data[S.wdUser] && data[S.wdPass]);
+  if (wdReady) {
+    try {
+      const st = await bgSend({ type: 'WD_STATUS' });
+      if (syncDot) syncDot.className = 'sync-dot ' + (st && st.ok && !st.error ? 'ok' : 'warn');
+      if (syncText) syncText.textContent = (!st || !st.ok) ? '同步状态未知'
+        : st.error ? ('同步失败：' + st.error)
+        : st.count ? `已与坚果云同步 — 云端 ${st.count} 条记录`
+        : '坚果云已连接 — 暂无记录';
+    } catch (_) {
+      if (syncText) syncText.textContent = '坚果云同步不可用';
+    }
+  } else if (url && key) {
     try {
       const userId = await bgSend({ type: 'GET_USER_ID' }).then(r => r?.userId || null);
       if (userId) {
@@ -1397,7 +1496,7 @@ async function loadHistory(data) {
       if (syncText) syncText.textContent = '云同步离线';
     }
   } else {
-    if (syncText) syncText.textContent = '仅本地 — 未配置 Supabase';
+    if (syncText) syncText.textContent = '仅本地 — 未配置云同步';
   }
 
   const filterEl = $('historyFilter');
@@ -1462,7 +1561,21 @@ async function loadHistory(data) {
   const syncBtn = $('syncNowBtn');
   if (syncBtn) {
     syncBtn.addEventListener('click', async () => {
-      syncBtn.textContent = 'Syncing...';
+      const wd = await bgSend({ type: 'WD_STATUS' }).catch(() => null);
+      if (wd && wd.configured) {
+        syncBtn.textContent = '同步中…';
+        const r = await bgSend({ type: 'WD_SYNC_NOW' });
+        syncBtn.textContent = '同步';
+        const syncText = $('syncText');
+        if (r && r.ok) {
+          if (syncText) syncText.textContent = `已同步 — 云端 ${r.count} 条记录`;
+          setTimeout(() => location.reload(), 800);
+        } else if (syncText) {
+          syncText.textContent = '同步失败：' + (r?.err || '未知错误');
+        }
+        return;
+      }
+      syncBtn.textContent = '同步中…';
       let pushed = 0, failed = 0, pushErr = null;
       const syncText = $('syncText');
       try {
@@ -2013,6 +2126,7 @@ br.storage.onChanged.addListener((changes, area) => {
 
 // -- Init --
 loadCredentials();
+renderWdStatus();
 verifyAll().then(() => {
   const supaOk = $('dot-supabase')?.classList.contains('ok');
   showWelcomeToast(supaOk);

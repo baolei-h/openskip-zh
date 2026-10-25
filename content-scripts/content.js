@@ -598,6 +598,15 @@ function _pageUrl() {
     } catch { return null; }
   }
 
+  // WebDAV sync: tell the background a position changed; it batches the upload.
+  let _wdTouchAt = 0;
+  function _wdTouch() {
+    const now = Date.now();
+    if (now - _wdTouchAt < 60000) return;
+    _wdTouchAt = now;
+    try { Promise.resolve(br.runtime.sendMessage({ type: 'WD_TOUCH' })).catch(() => {}); } catch { /* ok */ }
+  }
+
   // ── Playback save ──────────────────────────────────────────────────────────
 
   // Local cache: every save. Cloud: at most every CLOUD_PUSH_MS while playing,
@@ -622,6 +631,7 @@ function _pageUrl() {
       saveTimer.id = setTimeout(() => { saveTimer.id = null; saveTimer.last = Date.now(); _pushPlayback(saveTimer); }, wait);
     }
     await cacheWrite(mediaId, pos, dur);
+    if (typeof _wdTouch === 'function') _wdTouch();
   }
   async function _pushPlayback(saveTimer) {
       const job = saveTimer.pending; saveTimer.pending = null;
@@ -662,6 +672,7 @@ function _pageUrl() {
     const dur  = Math.round(video.duration);
     // Write local cache synchronously via a fire-and-forget
     cacheWrite(mediaId, pos, dur);
+    if (typeof _wdTouch === 'function') _wdTouch();
     // Best-effort cloud message (background may still be alive)
     getUserId().then(userId => {
       if (!userId) return;

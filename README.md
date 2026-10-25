@@ -5,7 +5,7 @@
 [![Firefox](https://img.shields.io/badge/Firefox-Download-blue?logo=firefox)](../../releases/latest)
 [![Chrome](https://img.shields.io/badge/Chrome-Download-yellow?logo=googlechrome)](../../releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.13.0-green.svg)](https://github.com/govinda-rajulu/openskip/releases/tag/v1.13.0)
+[![Version](https://img.shields.io/badge/version-1.13.1-green.svg)](https://github.com/govinda-rajulu/openskip/releases/tag/v1.13.1)
 
 > 本仓库是 [govinda-rajulu/openskip](https://github.com/govinda-rajulu/openskip)（SkipStream 1.13.0）的**简体中文汉化版**：弹窗、设置页、页内提示与字幕菜单均已汉化，代码逻辑与上游保持一致。英文原文说明见 [README.en.md](README.en.md)。
 
@@ -17,7 +17,7 @@
 
 ### Chrome / Edge
 
-1. 下载 **`skipstream-1.13.0-chrome.zip`**（[最新版](../../releases/latest)）。
+1. 下载 **`skipstream-1.13.1-chrome.zip`**（[最新版](../../releases/latest)）。
 2. 解压到任意固定目录（解压后文件夹里应直接看到 `manifest.json`）。
 3. 打开 `chrome://extensions`（Edge 为 `edge://extensions`），打开右上角的「开发者模式」。
 4. 点「加载已解压的扩展程序」，选择第 2 步解压出的文件夹。
@@ -26,7 +26,7 @@
 
 ### Firefox
 
-1. 下载 **`skipstream-1.13.0-firefox.zip`**（[最新版](../../releases/latest)）。
+1. 下载 **`skipstream-1.13.1-firefox.zip`**（[最新版](../../releases/latest)）。
 2. 解压到任意目录。
 3. 打开 `about:debugging#/runtime/this-firefox` → 「临时载入附加组件」→ 选择解压目录里的 `manifest.json`。
 4. 临时载入在重启浏览器后失效，需要重新载入；要长期安装需使用签名版本（官方商店的英文原版，或自行用 AMO 账号签名）。
@@ -37,6 +37,18 @@
 
 ---
 
+## 云同步（坚果云）
+
+观看记录默认只保存在本机。想让两台电脑接上，用坚果云就够了，不用注册别的服务、也不用跑 SQL：
+
+1. 坚果云网页版 → 账户信息 → 安全选项 → 第三方应用管理 → 添加应用，生成一个**应用密码**（不是登录密码）。
+2. 扩展 → 设置 → 账号 → 找到 **云同步** 卡片：服务器地址保持 `https://dav.jianguoyun.com/dav`，填坚果云邮箱和应用密码，点「保存并验证」。
+3. 另一台电脑重复第 2 步（三个值相同），几分钟内历史就会合并，历史页可按设备筛选。
+
+合并规则：同一条观看记录以更新时间为准，新的覆盖旧的；设置以最后修改的那台设备为准。同步发生在浏览器启动时、每 5 分钟、以及观看进度变化 2 分钟后；设置页有「立即同步」。
+
+数据写在你网盘的 `skipstream/sync.json`，扩展只读写这一个文件。目前只放行 `dav.jianguoyun.com`，其他 WebDAV（Nextcloud、NAS）需要先加域名。
+
 ## SkipStream 能做什么
 
 - **跳过**片头、前情回顾、片尾字幕与预告：可以立即跳过，也可以倒计时 3 秒后跳过并支持撤销。
@@ -45,6 +57,7 @@
 - **YouTube**：跳过 [SponsorBlock](https://sponsor.ajay.app) 标记的片段，每类片段可设为「自动 / 询问 / 关闭」，进度条上会显示标记（m.youtube.com 同样支持）。
 - **续播**：从上次看到的位置继续，内嵌播放器同样有效。地址里带的时间（例如 `?t=90`）优先级更高。
 - **字幕**：可下载 OpenSubtitles 字幕，也可加载自己的 .srt / .vtt 文件。颜色、字体（9 种，含 Netflix 与 Prime Video 风格）、字重、背景、描边与字号均可调，设置页带实时预览。右键点击 CC 可校正时间轴，并按剧集分别记住。
+- **云同步**：把记录放进你自己的坚果云（WebDAV），两台电脑自动合并
 - **历史**：保留最近 300 个视频，带海报、站点名称与站点图标，可按站点和最后播放设备筛选；另有统计、按站点规则、倍速控制与可选的「自动下一集」。
 - **备份**：一个文件包含全部设置与历史；只有勾选时才会写入密钥，并由你的口令加密。
 - **弹窗工具**：「检查本页」与「站点报告」展示 SkipStream 的检测结果，反馈问题时可直接附上。

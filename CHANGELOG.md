@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.13.1] - 2026-10-25
+### 新增
+- 新的云同步方式：**坚果云 WebDAV**。只要服务器地址、坚果云邮箱和一个「应用密码」三项，不用注册数据库、不用跑 SQL。观看历史与设置写入你自己网盘的 `skipstream/sync.json`
+- 合并规则：以每条记录的更新时间为准，新的覆盖旧的；设置以最后修改的那台设备为准。两台电脑用同一个坚果云账号即可接上
+- 自动同步：浏览器启动时、每 5 分钟、以及观看进度变化后 2 分钟各同步一次；设置页有「立即同步」，历史页的同步按钮也会走这条路
+- 设置页新增同步状态（上次同步时间、云端条数、错误原因），失败会显示原因而不是静默
+### 说明
+- 原 Supabase 同步保留（设置 → 账号 → Supabase），仍可继续用
+- 目前只允许坚果云域名 `dav.jianguoyun.com`，其他 WebDAV 服务需要再放行域名
+- 修复：AnimeSkip 状态残留英文 `Disabled`；站点诊断里的 recaps/outros 未汉化
+
 ## [1.13.0] - 2026-10-05
 ### Fixed
 - Player frames (embedded players such as 1Shows / viduki.net) stopped their start-up early since 1.11. They started only when a video began to play, and "Check this page" said "did not finish starting". A video that already played when the page loaded got no skips and no resume. Now every frame with a video starts at once

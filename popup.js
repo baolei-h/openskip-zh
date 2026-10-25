@@ -1,4 +1,4 @@
-/* SkipStream - popup v1.13.0 */
+/* SkipStream - popup v1.13.1 */
 'use strict';
 
 const br = globalThis.browser?.runtime?.id ? globalThis.browser : globalThis.chrome;

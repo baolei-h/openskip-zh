@@ -41,6 +41,9 @@ br.alarms.onAlarm.addListener(async (alarm) => {
     await pushUnsyncedHistory();
     await cleanupOldData();
   }
+  if (alarm.name === WD_ALARM) {
+    await wdSync();
+  }
 });
 
 // ── In-memory caches (storage-backed on SW terminate) ─────────────────────────
@@ -917,6 +920,261 @@ br.storage.onChanged.addListener((changes, area) => {
   }, 5000);
 });
 
+// ── WebDAV sync (Nutstore / 坚果云) ──────────────────────────────────────────
+// One small JSON file on the user's own WebDAV drive holds the watch history and
+// the settings. No account system, no SQL to run: server + login + app password.
+// 坚果云 (dav.jianguoyun.com) is the only host the CSP allows today.
+const WD_KEY_URL  = 'wdUrl';
+const WD_KEY_USER = 'wdUser';
+const WD_KEY_PASS = 'wdPass';
+const WD_DEFAULT_URL  = 'https://dav.jianguoyun.com/dav';
+const WD_ALLOWED_HOST = 'dav.jianguoyun.com';
+const WD_DIR  = 'skipstream';
+const WD_FILE = 'skipstream/sync.json';
+const WD_ALARM = 'ss_webdav_sync';
+const WD_PUSH_MS = 120000;      // quiet push 2 minutes after the last change
+const WD_HISTORY_MAX = 300;
+const WD_STATE_KEY = 'wd_state';
+
+let _wdSyncRun = null;
+let _wdApplying = false;
+let _wdPushTimer = null;
+
+async function wdConfig() {
+  try {
+    const s = await br.storage.local.get([WD_KEY_URL, WD_KEY_USER, WD_KEY_PASS]);
+    const url  = String(s[WD_KEY_URL]  || '').trim().replace(/\/+$/, '');
+    const user = String(s[WD_KEY_USER] || '').trim();
+    const pass = String(s[WD_KEY_PASS] || '');
+    return { url, user, pass, ready: !!(url && user && pass) };
+  } catch {
+    return { url: '', user: '', pass: '', ready: false };
+  }
+}
+
+function wdAuth(user, pass) {
+  // btoa is latin-1 only; credentials are usually ASCII but encode anyway.
+  const raw = user + ':' + pass;
+  return 'Basic ' + btoa(unescape(encodeURIComponent(raw)));
+}
+
+async function wdRequest(method, url, cfg, body) {
+  const ctl = new AbortController();
+  const timer = setTimeout(() => { try { ctl.abort(); } catch { /* ok */ } }, 20000);
+  try {
+    return await fetch(url, {
+      method,
+      headers: {
+        Authorization: wdAuth(cfg.user, cfg.pass),
+        ...(body ? { 'Content-Type': 'application/json; charset=utf-8' } : {}),
+      },
+      body,
+      signal: ctl.signal,
+    });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// 坚果云 answers 405 when the folder already exists, 201 when it was created.
+async function wdEnsureDir(cfg) {
+  const res = await wdRequest('MKCOL', cfg.url + '/' + WD_DIR, cfg);
+  if (res.status === 401 || res.status === 403) throw new Error('账号或应用密码不正确');
+  if (!res.ok && res.status !== 405) throw new Error('建目录失败：HTTP ' + res.status);
+}
+
+async function wdGet(cfg) {
+  const res = await wdRequest('GET', cfg.url + '/' + WD_FILE, cfg);
+  if (res.status === 401 || res.status === 403) throw new Error('账号或应用密码不正确');
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error('读取失败：HTTP ' + res.status);
+  const text = await res.text();
+  if (!text.trim()) return null;
+  try {
+    const data = JSON.parse(text);
+    return data && typeof data === 'object' ? data : null;
+  } catch {
+    throw new Error('云端文件不是有效的 JSON');
+  }
+}
+
+async function wdPut(cfg, payload) {
+  const url = cfg.url + '/' + WD_FILE;
+  let res = await wdRequest('PUT', url, cfg, JSON.stringify(payload));
+  if (res.status === 409 || res.status === 404) {
+    await wdEnsureDir(cfg);
+    res = await wdRequest('PUT', url, cfg, JSON.stringify(payload));
+  }
+  if (res.status === 401 || res.status === 403) throw new Error('账号或应用密码不正确');
+  if (!res.ok) throw new Error('写入失败：HTTP ' + res.status);
+}
+
+async function wdDeviceLabel() {
+  try {
+    const s = await br.storage.local.get(['deviceName', 'wd_device']);
+    if (s.deviceName) return String(s.deviceName).slice(0, 40);
+    if (s.wd_device) return String(s.wd_device);
+  } catch { /* ok */ }
+  return '浏览器';
+}
+
+async function wdLocalSnapshot() {
+  const keys = [...SYNC_PREF_KEYS, 'skipstream_site_rules', 'skipstream_theme', 'skipstream_cache', 'wd_settings_at'];
+  const s = await br.storage.local.get(keys);
+  const device = await wdDeviceLabel();
+  const history = {};
+  for (const [id, e] of Object.entries(s.skipstream_cache || {})) {
+    if (!e || !e.title || !e.p) continue;
+    history[id] = {
+      p: Number(e.p) || 0,
+      d: Number(e.d) || 0,
+      t: Number(e.t) || 0,
+      url: String(e.url || ''),
+      title: String(e.title || '').slice(0, 200),
+      site: String(e.site || ''),
+      site_name: String(e.site_name || ''),
+      device: String(e.device || device),
+    };
+  }
+  return {
+    v: 1,
+    settings_at: Number(s.wd_settings_at) || 0,
+    settings: {
+      prefs: pickSyncPrefs(s),
+      site_rules: s.skipstream_site_rules || {},
+      theme: s.skipstream_theme || null,
+    },
+    history,
+  };
+}
+
+// Newer wins per media id; settings are taken from the side edited last.
+function wdMerge(local, remote) {
+  const localAt  = Number(local.settings_at) || 0;
+  const remoteAt = Number(remote && remote.settings_at) || 0;
+  const remoteNewer = remoteAt > localAt;
+  const rSet = (remote && remote.settings) || {};
+  const out = {
+    v: 1,
+    settings_at: Math.max(localAt, remoteAt),
+    settings: remoteNewer
+      ? {
+          prefs: { ...(local.settings.prefs || {}), ...(rSet.prefs || {}) },
+          site_rules: rSet.site_rules && typeof rSet.site_rules === 'object' ? rSet.site_rules : local.settings.site_rules,
+          theme: typeof rSet.theme === 'string' && rSet.theme ? rSet.theme : local.settings.theme,
+        }
+      : local.settings,
+    history: {},
+  };
+  const hist = { ...((remote && remote.history) || {}) };
+  for (const [id, entry] of Object.entries(local.history)) {
+    const r = hist[id];
+    if (!r || (Number(entry.t) || 0) >= (Number(r.t) || 0)) hist[id] = entry;
+  }
+  const ids = Object.keys(hist)
+    .sort((a, b) => (Number(hist[b].t) || 0) - (Number(hist[a].t) || 0))
+    .slice(0, WD_HISTORY_MAX);
+  for (const id of ids) out.history[id] = hist[id];
+  return { merged: out, remoteNewer };
+}
+
+async function wdApply(merged, remoteNewer) {
+  _wdApplying = true;
+  try {
+    const cacheStored = await br.storage.local.get('skipstream_cache');
+    const local = cacheStored.skipstream_cache || {};
+    const next = { ...local };
+    for (const [id, e] of Object.entries(merged.history)) {
+      const cur = next[id];
+      if (!cur || (Number(e.t) || 0) >= (Number(cur.t) || 0)) next[id] = { ...cur, ...e };
+    }
+    const write = {};
+    if (JSON.stringify(next) !== JSON.stringify(local)) write.skipstream_cache = next;
+    if (remoteNewer) {
+      for (const [k, v] of Object.entries(merged.settings.prefs || {})) write[k] = v;
+      if (merged.settings.site_rules) write.skipstream_site_rules = merged.settings.site_rules;
+      if (merged.settings.theme) write.skipstream_theme = merged.settings.theme;
+      write.wd_settings_at = merged.settings_at;
+    }
+    if (Object.keys(write).length) await br.storage.local.set(write);
+  } finally {
+    _wdApplying = false;
+  }
+}
+
+async function wdSync() {
+  if (_wdSyncRun) return _wdSyncRun;
+  _wdSyncRun = (async () => {
+    const cfg = await wdConfig();
+    if (!cfg.ready) return { ok: false, err: 'not_configured' };
+    if (!(await techDataAllowed())) return { ok: false, err: 'tech_data_off' };
+    try {
+      const remote = await wdGet(cfg);
+      const local  = await wdLocalSnapshot();
+      const { merged, remoteNewer } = wdMerge(local, remote || null);
+      await wdApply(merged, remoteNewer);
+      await wdPut(cfg, merged);
+      const state = { at: Date.now(), error: '', count: Object.keys(merged.history).length, remoteAt: merged.settings_at };
+      await br.storage.local.set({ [WD_STATE_KEY]: state });
+      return { ok: true, count: state.count, at: state.at };
+    } catch (e) {
+      const msg = String((e && e.message) || e);
+      logError('webdav_sync', e);
+      await br.storage.local.set({ [WD_STATE_KEY]: { at: Date.now(), error: msg, count: 0 } });
+      return { ok: false, err: msg };
+    } finally {
+      _wdSyncRun = null;
+    }
+  })();
+  return _wdSyncRun;
+}
+
+async function wdTest(cfg) {
+  try {
+    const dirRes = await wdRequest('MKCOL', cfg.url + '/' + WD_DIR, cfg);
+    if (dirRes.status === 401 || dirRes.status === 403) return { ok: false, err: '账号或应用密码不正确' };
+    if (!dirRes.ok && dirRes.status !== 405) return { ok: false, err: '无法访问：HTTP ' + dirRes.status };
+    const got = await wdRequest('GET', cfg.url + '/' + WD_FILE, cfg);
+    if (got.status === 401 || got.status === 403) return { ok: false, err: '账号或应用密码不正确' };
+    if (!got.ok && got.status !== 404) return { ok: false, err: '读取失败：HTTP ' + got.status };
+    return { ok: true, exists: got.ok };
+  } catch (e) {
+    return { ok: false, err: String((e && e.message) || e) };
+  }
+}
+
+function wdSchedulePush(delay) {
+  if (_wdApplying) return;
+  clearTimeout(_wdPushTimer);
+  _wdPushTimer = setTimeout(() => { _wdPushTimer = null; wdSync(); }, delay || WD_PUSH_MS);
+}
+
+function wdEnsureAlarm() {
+  try {
+    Promise.resolve(br.alarms.get(WD_ALARM))
+      .then(a => { if (!a) br.alarms.create(WD_ALARM, { periodInMinutes: 5 }); })
+      .catch(() => { try { br.alarms.create(WD_ALARM, { periodInMinutes: 5 }); } catch { /* ok */ } });
+  } catch { /* ok */ }
+}
+wdEnsureAlarm();
+
+// A local settings change makes this device the newest one; mark it and push soon.
+br.storage.onChanged.addListener((changes, area) => {
+  if (area !== 'local' || _wdApplying) return;
+  const keys = Object.keys(changes);
+  if (keys.includes(WD_STATE_KEY)) return;
+  if (keys.includes('wd_settings_at')) return;   // our own pull: not a local edit
+  const touchedSettings = keys.some(k => SYNC_PREF_KEYS.includes(k) || k === 'skipstream_site_rules' || k === 'skipstream_theme');
+  if (touchedSettings) br.storage.local.set({ wd_settings_at: Date.now() }).catch(() => {});
+  if (touchedSettings || keys.includes('skipstream_cache')) {
+    wdConfig().then(c => { if (c.ready) wdSchedulePush(); }).catch(() => {});
+  }
+});
+
+try {
+  br.runtime.onStartup?.addListener(() => { wdEnsureAlarm(); wdSync(); });
+} catch { /* ok */ }
+
 // ── Service checks ────────────────────────────────────────────────────────────
 
 async function checkSupabase(supabaseUrl, supabaseAnonKey) {
@@ -1097,7 +1355,10 @@ br.runtime.onInstalled.addListener(async ({ reason }) => {
       if (!a) br.alarms.create(ALARM_QUEUE_FLUSH, { periodInMinutes: 5 });
     }).catch(() => { br.alarms.create(ALARM_QUEUE_FLUSH, { periodInMinutes: 5 }); });
   }
-
+  wdEnsureAlarm();
+  if (reason === 'install') {
+    wdConfig().then(c => { if (c.ready) wdSync(); }).catch(() => {});
+  }
   if (reason === 'install') {
     br.tabs.create({ url: br.runtime.getURL('options.html') });
   }
@@ -1339,6 +1600,41 @@ br.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendResponse({ data: null, err: String(e) });
       });
     return true;
+  }
+
+  if (msg.type === 'WD_TEST') {
+    const cfg = {
+      url:  String(msg.url  || '').trim().replace(/\/+$/, ''),
+      user: String(msg.user || '').trim(),
+      pass: String(msg.pass || ''),
+    };
+    if (!cfg.url || !cfg.user || !cfg.pass) { sendResponse({ ok: false, err: '请填写服务器地址、账号和应用密码' }); return; }
+    if (!/^https:\/\//.test(cfg.url)) { sendResponse({ ok: false, err: '服务器地址必须是 https' }); return; }
+    wdTest(cfg).then(sendResponse, e => sendResponse({ ok: false, err: String(e) }));
+    return true;
+  }
+
+  if (msg.type === 'WD_SYNC_NOW') {
+    wdSync().then(sendResponse, e => sendResponse({ ok: false, err: String(e) }));
+    return true;
+  }
+
+  if (msg.type === 'WD_STATUS') {
+    Promise.all([wdConfig(), br.storage.local.get(WD_STATE_KEY)])
+      .then(([cfg, s]) => {
+        const st = s[WD_STATE_KEY] || {};
+        sendResponse({ ok: true, configured: cfg.ready, url: cfg.url, user: cfg.user ? cfg.user.replace(/(.{2}).*(@.*)?$/, '$1***$2') : '',
+          at: st.at || 0, error: st.error || '', count: st.count || 0 });
+      })
+      .catch(e => sendResponse({ ok: false, err: String(e) }));
+    return true;
+  }
+
+  if (msg.type === 'WD_TOUCH') {
+    // The page saved a position; push quietly a little later.
+    wdConfig().then(c => { if (c.ready) wdSchedulePush(); }).catch(() => {});
+    sendResponse({ ok: true });
+    return;
   }
 
   if (msg.type === 'SUPABASE_UPSERT') {
