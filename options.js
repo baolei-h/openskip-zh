@@ -575,7 +575,7 @@ async function verifyAnimeskip(enabled, clientId) {
   const alertEl = $('alert-animeskip');
 
   if (!enabled) {
-    setDot(dotMain, '', 'Disabled', msgMain);
+    setDot(dotMain, '', '已关闭', msgMain);
     setNavDot('animeskip', '');
     return;
   }

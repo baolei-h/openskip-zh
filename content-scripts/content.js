@@ -3122,7 +3122,7 @@ if (e.data?.type === MSG_DO && pendingSkipFn) { pendingSkipFn(); pendingSkipFn =
   function _diagAuto(p) {
     if (!p) return '';
     if (!p.skipEnabled) return '跳过已关闭';
-    const on = [p.skipIntro && '片头与赞助', p.skipRecap && 'recaps', p.skipOutro && 'outros'].filter(Boolean);
+    const on = [p.skipIntro && '片头与赞助', p.skipRecap && '回顾', p.skipOutro && '片尾'].filter(Boolean);
     return on.length ? '自动：' + on.join(', ') : '先询问（按钮）';
   }
 
