@@ -1653,7 +1653,7 @@ function backupKit(subtle, randomBytes) {
     'subtitle_color', 'subtitle_bg', 'subtitle_font', 'subtitle_outline', 'subtitle_edge', 'subtitle_weight', 'subtitle_offsets', 'sbModes', 'showTimeline', 'skipNotice', 'resumeNotice', 'ccButton', 'subtitle_cc_pos'];
   const STATS = ['skipstream_stats', 'statsSkipsToday', 'statsDate', 'statsTotalSkips', 'statsTotalTimeSaved', 'statsSessions'];
   const SECRETS = ['supabaseUrl', 'supabaseAnonKey', 'introdbApiKey', 'tmdbApiKey', 'animeSkipClientId',
-    'animeSkipAuthToken', 'osub_username', 'osub_password'];
+    'animeSkipAuthToken', 'osub_username', 'osub_password', 'wdUrl', 'wdUser', 'wdPass'];
   const ITER = 600000;
   const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   const HISTORY_MAX = 300;   // same as the local cache (content.js CACHE_MAX)
