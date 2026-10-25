@@ -2,8 +2,8 @@
 
 **自动跳过片头、前情回顾与片尾字幕，并从上次观看的位置继续。**
 
-[![Firefox Add-ons](https://img.shields.io/badge/Firefox%20Add--ons-Active-blue?logo=firefox)](https://addons.mozilla.org/en-US/firefox/addon/skipstream/)
-[![Chrome](https://img.shields.io/badge/Chrome-Manual%20Install-yellow?logo=googlechrome)](../../releases/latest)
+[![Firefox](https://img.shields.io/badge/Firefox-Download-blue?logo=firefox)](../../releases/latest)
+[![Chrome](https://img.shields.io/badge/Chrome-Download-yellow?logo=googlechrome)](../../releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-1.13.0-green.svg)](https://github.com/govinda-rajulu/openskip/releases/tag/v1.13.0)
 
@@ -13,14 +13,23 @@
 
 ## 安装
 
-**Firefox 官方商店：** [addons.mozilla.org/en-US/firefox/addon/skipstream](https://addons.mozilla.org/en-US/firefox/addon/skipstream/)（英文原版）。
+安装包在 [Releases](../../releases/latest) 页面，**按浏览器分开**，不要用 Code → Download ZIP（那是源码包，Chrome 会报「清单文件缺失或不可读取」，因为源码根目录放的是 Firefox 用的 `manifest.json`）。
 
-**安装本汉化版（手动加载）：**
+### Chrome / Edge
 
-1. 下载本仓库代码（Code → Download ZIP，或 `git clone`）。
-2. 打开 `chrome://extensions`（Edge 为 `edge://extensions`；Firefox 为 `about:debugging#/runtime/this-firefox`）。
-3. 打开「开发者模式」。
-4. 点击「加载已解压的扩展程序」，选择 `manifest-chrome.json` 所在目录（Firefox 选择 `manifest.json` 所在目录）。
+1. 下载 **`skipstream-1.13.0-chrome.zip`**（[最新版](../../releases/latest)）。
+2. 解压到任意固定目录（解压后文件夹里应直接看到 `manifest.json`）。
+3. 打开 `chrome://extensions`（Edge 为 `edge://extensions`），打开右上角的「开发者模式」。
+4. 点「加载已解压的扩展程序」，选择第 2 步解压出的文件夹。
+
+> 该包内是 MV3 的 `manifest.json`（由 `manifest-chrome.json` 改写而来），所以 Chrome 能直接加载。
+
+### Firefox
+
+1. 下载 **`skipstream-1.13.0-firefox.zip`**（[最新版](../../releases/latest)）。
+2. 解压到任意目录。
+3. 打开 `about:debugging#/runtime/this-firefox` → 「临时载入附加组件」→ 选择解压目录里的 `manifest.json`。
+4. 临时载入在重启浏览器后失效，需要重新载入；要长期安装需使用签名版本（官方商店的英文原版，或自行用 AMO 账号签名）。
 
 **Android：** 使用 Firefox for Android（扩展菜单中安装）。
 
