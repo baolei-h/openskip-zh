@@ -50,7 +50,7 @@ test('every fetch failure reason has words in the popup', () => {
     assert.ok(t && !t.startsWith('OpenSubtitles said'), r + ' has no text');
   }
   assert.match(subReason(undefined), /\S/);
-  assert.match(subReason({ ok: true, count: 12, name: 'a.srt' }), /12 lines from a\.srt/);
+  assert.match(subReason({ ok: true, count: 12, name: 'a.srt' }), /已加载 12 行（来自 a\.srt）/);
   assert.match(subReason({ ok: false, reason: 'HTTP 429' }), /HTTP 429/);
 });
 

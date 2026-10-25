@@ -51,6 +51,16 @@
 - supabase_setup.sql no longer makes ss_put_creds (unused since 1.11) and removes it from old projects. The old creds column stays. PRIVACY.md says how to clear it
 - README, PRIVACY, TESTING and the store text are rewritten in plain, short sentences (knowledge/handbook/WRITING.md)
 
+## 中文汉化版 - 2026-10-25
+### 汉化
+- 弹窗、设置页（功能 / 外观 / 账号 / 历史 / 统计 / 数据 / 数据来源）、页内跳过按钮与提示、字幕菜单、站点报告与诊断信息全部译为简体中文
+- 扩展名称改为「SkipStream 中文版」，描述、命令说明与页面语言标记（`zh-CN`）同步更新
+- 页脚链接指向本仓库（源码 / 隐私 / 反馈）
+- README 提供中文版，英文原文保留为 README.en.md
+- 仅改动界面文案，跳过、续播、同步、字幕等逻辑与上游 1.13.0 一致
+- 更新依赖英文文案的测试断言，`node --test tests/*.test.mjs` 通过
+
+
 ## [1.12.0] - 2026-10-03
 ### Added
 - Popup "Site report": what every frame of the page holds (players such as JW Player or Video.js, stream type, video size and length, subtitle tracks, frames, ids), including frames SkipStream does not run in. Shown in the popup, copied only when you press Copy; addresses are cut to host and path

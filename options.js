@@ -275,14 +275,14 @@ async function showSbSetup(url) {
 function hideSbSetup() { const box = $('sbSetup'); if (box) box.hidden = true; }
 $('sbCopySql')?.addEventListener('click', async () => {
   const st = $('sbSetupStatus'); const sql = await setupSql();
-  try { await navigator.clipboard.writeText(sql); if (st) st.textContent = 'Script copied. Paste it into a new query in the Supabase SQL editor and press Run.'; }
-  catch (_) { if (st) st.textContent = 'Copy did not work here. Open supabase_setup.sql from the SkipStream GitHub page instead.'; }
+  try { await navigator.clipboard.writeText(sql); if (st) st.textContent = '脚本已复制。请在 Supabase SQL 编辑器中新建查询并粘贴，然后点击「运行」。'; }
+  catch (_) { if (st) st.textContent = '此处无法复制。请从 SkipStream 的 GitHub 页面打开 supabase_setup.sql。'; }
 });
 $('sbRecheck')?.addEventListener('click', async () => {
   const st = $('sbSetupStatus'); if (st) st.textContent = 'Checking...';
   const d = await br.storage.local.get([S.supabaseUrl, S.supabaseAnonKey]);
   const ok = await verifySupabase(d[S.supabaseUrl], d[S.supabaseAnonKey]);
-  if (st) st.textContent = ok ? 'Done. Cloud sync is on.' : 'Not found yet. Make sure Run finished without errors in Supabase, then check again.';
+  if (st) st.textContent = ok ? '完成，云同步已开启。' : '还没找到。请确认 Supabase 中的「运行」已无报错完成，然后再次检查。';
 });
 document.querySelectorAll('select[data-sb]').forEach(sel => sel.addEventListener('change', async () => {
   const cur = cleanSbModes((await br.storage.local.get(S.sbModes))[S.sbModes]);
@@ -425,18 +425,18 @@ async function verifyIntrodb(key) {
     // Reachability check only - this endpoint is public and ignores the key.
     const r = await fetch('https://api.introdb.app/segments?imdb_id=tt0944947&season=1&episode=1');
     if (r.ok) {
-      setDot(dotMain, 'ok', key ? 'Reachable - key saved for submitting timings' : 'Reachable - no key needed to skip', msgMain);
+      setDot(dotMain, 'ok', key ? '可访问 — 已保存密钥（用于提交时间点）' : '可访问 — 跳过无需密钥', msgMain);
       setDot(dotCard, 'ok');
       setNavDot('introdb', 'ok');
       if (alertEl) hideAlert(alertEl);
       return true;
     }
-    setDot(dotMain, 'warn', 'IntroDB returned HTTP ' + r.status, msgMain);
+    setDot(dotMain, 'warn', 'IntroDB 返回 HTTP ' + r.status, msgMain);
     setDot(dotCard, 'warn');
     setNavDot('introdb', 'warn');
     return false;
   } catch (e) {
-    setDot(dotMain, 'warn', 'Network error reaching IntroDB', msgMain);
+    setDot(dotMain, 'warn', '连接 IntroDB 时网络出错', msgMain);
     setDot(dotCard, 'warn');
     setNavDot('introdb', 'warn');
     return false;
@@ -465,7 +465,7 @@ async function verifySupabase(url, key) {
   setNavDot('supabase', 'checking');
 
   if (!url || !key) {
-    setDot(dotMain, 'warn', 'Not configured (optional)', msgMain);
+    setDot(dotMain, 'warn', '未配置（可选）', msgMain);
     setDot(dotCard, 'warn');
     setNavDot('supabase', 'warn');
     return false;
@@ -483,7 +483,7 @@ async function verifySupabase(url, key) {
     });
 
     if (r.ok) {
-      setDot(dotMain, 'ok', 'Connected - cloud sync active', msgMain);
+      setDot(dotMain, 'ok', '已连接 — 云同步已启用', msgMain);
       setDot(dotCard, 'ok');
       setNavDot('supabase', 'ok');
       if (alertEl) hideAlert(alertEl);
@@ -493,8 +493,8 @@ async function verifySupabase(url, key) {
     }
 
     if (r.status === 404 || r.status === 406) {
-      const sqlMsg = 'Connected, but the SkipStream tables are not in your project yet. Run the setup script once (below).';
-      setDot(dotMain, 'warn', 'Connected, setup script not run yet', msgMain);
+      const sqlMsg = '已连接，但你的项目中还没有 SkipStream 的数据表。请先运行一次安装脚本（见下方）。';
+      setDot(dotMain, 'warn', '已连接，安装脚本尚未运行', msgMain);
       setDot(dotCard, 'warn');
       setNavDot('supabase', 'warn');
       [sqlEl, sqlEl2].forEach(el => { if (el) showAlert(el, 'warn', sqlMsg); });
@@ -503,10 +503,10 @@ async function verifySupabase(url, key) {
     }
 
     if (r.status === 401) {
-      setDot(dotMain, 'err', 'Invalid anon key (401)', msgMain);
+      setDot(dotMain, 'err', 'anon key 无效（401）', msgMain);
       setDot(dotCard, 'err');
       setNavDot('supabase', 'err');
-      if (alertEl) showAlert(alertEl, 'err', 'Invalid anon key. Check Project Settings > API.');
+      if (alertEl) showAlert(alertEl, 'err', 'anon key 无效。请检查 Project Settings > API。');
       return false;
     }
 
@@ -515,10 +515,10 @@ async function verifySupabase(url, key) {
     setNavDot('supabase', 'err');
     return false;
   } catch (e) {
-    setDot(dotMain, 'warn', 'Network error - check Project URL', msgMain);
+    setDot(dotMain, 'warn', '网络错误 — 请检查项目 URL', msgMain);
     setDot(dotCard, 'warn');
     setNavDot('supabase', 'warn');
-    if (alertEl) showAlert(alertEl, 'warn', 'Could not reach Supabase. Check your Project URL.');
+    if (alertEl) showAlert(alertEl, 'warn', '无法连接 Supabase。请检查项目 URL。');
     return false;
   }
 }
@@ -535,7 +535,7 @@ async function verifyTmdb(key) {
   setNavDot('tmdb', 'checking');
 
   if (!key) {
-    setDot(dotMain, 'warn', 'Not configured (optional)', msgMain);
+    setDot(dotMain, 'warn', '未配置（可选）', msgMain);
     setDot(dotCard, 'warn');
     setNavDot('tmdb', 'warn');
     return false;
@@ -548,20 +548,20 @@ async function verifyTmdb(key) {
       ? await fetch('https://api.themoviedb.org/3/configuration', { headers: { Authorization: 'Bearer ' + k } })
       : await fetch('https://api.themoviedb.org/3/configuration?api_key=' + encodeURIComponent(k));
     if (r.ok) {
-      setDot(dotMain, 'ok', 'Connected - TMDB metadata active', msgMain);
+      setDot(dotMain, 'ok', '已连接 — TMDB 元数据已启用', msgMain);
       setDot(dotCard, 'ok');
       setNavDot('tmdb', 'ok');
       if (alertEl) hideAlert(alertEl);
       return true;
     }
-    const err = r.status === 401 ? 'Invalid API key (401)' : 'HTTP ' + r.status;
+    const err = r.status === 401 ? 'API 密钥无效（401）' : 'HTTP ' + r.status;
     setDot(dotMain, 'err', err, msgMain);
     setDot(dotCard, 'err');
     setNavDot('tmdb', 'err');
     if (alertEl) showAlert(alertEl, 'err', err);
     return false;
   } catch (e) {
-    setDot(dotMain, 'warn', 'Network error', msgMain);
+    setDot(dotMain, 'warn', '网络错误', msgMain);
     setDot(dotCard, 'warn');
     setNavDot('tmdb', 'warn');
     return false;
@@ -580,9 +580,9 @@ async function verifyAnimeskip(enabled, clientId) {
     return;
   }
   if (!clientId) {
-    setDot(dotMain, 'warn', 'Enabled but no Client ID', msgMain);
+    setDot(dotMain, 'warn', '已启用，但缺少 Client ID', msgMain);
     setNavDot('animeskip', 'warn');
-    if (alertEl) showAlert(alertEl, 'warn', 'Paste your AnimeSkip Client ID to enable anime detection.');
+    if (alertEl) showAlert(alertEl, 'warn', '请填写 AnimeSkip Client ID 以启用番剧识别。');
     return;
   }
 
@@ -597,15 +597,15 @@ async function verifyAnimeskip(enabled, clientId) {
       body: JSON.stringify({ query: '{ __typename }' })
     });
     if (r.ok) {
-      setDot(dotMain, 'ok', 'Connected - AnimeSkip active', msgMain);
+      setDot(dotMain, 'ok', '已连接 — AnimeSkip 已启用', msgMain);
       setNavDot('animeskip', 'ok');
       if (alertEl) hideAlert(alertEl);
     } else {
-      setDot(dotMain, 'err', 'Invalid Client ID (HTTP ' + r.status + ')', msgMain);
+      setDot(dotMain, 'err', 'Client ID 无效（HTTP ' + r.status + ')', msgMain);
       setNavDot('animeskip', 'err');
     }
   } catch (e) {
-    setDot(dotMain, 'warn', 'Network error', msgMain);
+    setDot(dotMain, 'warn', '网络错误', msgMain);
     setNavDot('animeskip', 'warn');
   }
 }
@@ -643,12 +643,12 @@ async function verifyAll() {
   const dotOsub = $('dot-osub');
   const msgOsub = $('msg-osub');
   if (res?.loggedIn) {
-    const msg = osubQuotaText(res, 'Logged in');
+    const msg = osubQuotaText(res, '已登录');
     if (dotOsub) dotOsub.className = 'status-dot ok';
     if (msgOsub) { msgOsub.className = 'status-msg ok'; msgOsub.textContent = msg; }
   } else {
     if (dotOsub) dotOsub.className = 'status-dot warn';
-    if (msgOsub) { msgOsub.className = 'status-msg warn'; msgOsub.textContent = 'Not logged in: 5 downloads a day. Log in for 20 a day.'; }
+    if (msgOsub) { msgOsub.className = 'status-msg warn'; msgOsub.textContent = '未登录：每天 5 次下载。登录后每天 20 次。'; }
   }
   const d = $('dot-introdb');
   const overall = d?.classList.contains('ok') ? 'ok' :
@@ -685,7 +685,7 @@ async function loadCredentials() {
   if (dotOsub) {
     if (osubStatus?.loggedIn) {
       setDot(dotOsub, 'ok');
-      const msg = osubQuotaText(osubStatus, 'Logged in');
+      const msg = osubQuotaText(osubStatus, '已登录');
       showAlert($('alert-osub'), 'ok', msg);
     } else {
       setDot(dotOsub, '');
@@ -740,7 +740,7 @@ if (saveIntrodbBtn) {
     await verifyIntrodb(key);
     saveIntrodbBtn.disabled = false;
     saveIntrodbBtn.textContent = 'Save & Verify';
-    if (key) showAlert($('alert-introdb'), 'ok', 'IntroDB key saved.');
+    if (key) showAlert($('alert-introdb'), 'ok', 'IntroDB 密钥已保存。');
   });
 }
 
@@ -756,7 +756,7 @@ if (saveSupabaseBtn) {
     const ok = await verifySupabase(url, key);
     saveSupabaseBtn.disabled = false;
     saveSupabaseBtn.textContent = 'Save & Verify';
-    if (ok) showAlert($('alert-supabase'), 'ok', 'Supabase credentials saved.');
+    if (ok) showAlert($('alert-supabase'), 'ok', 'Supabase 凭据已保存。');
   });
 }
 
@@ -771,7 +771,7 @@ if (saveTmdbBtn) {
     await verifyTmdb(key);
     saveTmdbBtn.disabled = false;
     saveTmdbBtn.textContent = 'Save & Verify';
-    if (key) showAlert($('alert-tmdb'), 'ok', 'TMDB key saved.');
+    if (key) showAlert($('alert-tmdb'), 'ok', 'TMDB 密钥已保存。');
   });
 }
 
@@ -792,7 +792,7 @@ if (saveAnimeskipBtn) {
     await verifyAnimeskip(enabled, clientId);
     saveAnimeskipBtn.disabled = false;
     saveAnimeskipBtn.textContent = 'Save & Verify';
-    showAlert($('alert-animeskip'), 'ok', 'AnimeSkip settings saved.');
+    showAlert($('alert-animeskip'), 'ok', 'AnimeSkip 设置已保存。');
   });
 }
 
@@ -813,7 +813,7 @@ function renderSiteRules() {
   if (!domains.length) {
     const emptyMsg = document.createElement('p');
     emptyMsg.style.cssText = 'font-size:12px;color:var(--text3);padding:4px 0';
-    emptyMsg.textContent = 'No rules yet. Add a domain below.';
+    emptyMsg.textContent = '还没有规则。可在下方添加域名。';
     list.appendChild(emptyMsg);
     return;
   }
@@ -829,7 +829,7 @@ function renderSiteRules() {
     const delBtn = document.createElement('button');
     delBtn.className = 'site-rule-del';
     delBtn.dataset.domain = domain;
-    delBtn.title = 'Remove rule';
+    delBtn.title = '删除规则';
     delBtn.textContent = 'x';
     row.appendChild(domainSpan);
     row.appendChild(modeSpan);
@@ -918,14 +918,14 @@ function loadStats(data) {
 
   if (sessionGrid) {
     sessionGrid.replaceChildren();
-    sessionGrid.appendChild(makeStatCard(skipsToday, 'Skips today'));
-    sessionGrid.appendChild(makeStatCard(fmtTime(todayTime), 'Time saved today'));
+    sessionGrid.appendChild(makeStatCard(skipsToday, '今日跳过'));
+    sessionGrid.appendChild(makeStatCard(fmtTime(todayTime), '今日节省时间'));
   }
   if (allGrid) {
     allGrid.replaceChildren();
-    allGrid.appendChild(makeStatCard(totalSkips, 'Total skips'));
+    allGrid.appendChild(makeStatCard(totalSkips, '累计跳过'));
     allGrid.appendChild(makeStatCard(sessions,   'Sessions'));
-    allGrid.appendChild(makeStatCard(fmtTime(totalTime), 'Total time saved'));
+    allGrid.appendChild(makeStatCard(fmtTime(totalTime), '累计节省时间'));
   }
 
   if (siteGrid) {
@@ -963,7 +963,7 @@ function loadStats(data) {
         titleWrap.className = 'card-title-wrap';
         const title = document.createElement('h2');
         title.className = 'card-title';
-        title.textContent = 'Top Sites';
+        title.textContent = '常看站点';
         titleWrap.appendChild(title);
         header.appendChild(icon);
         header.appendChild(titleWrap);
@@ -977,7 +977,7 @@ function loadStats(data) {
         if (entries.length > 8) {
           const more = document.createElement('p');
           more.style.cssText = 'font-size:11px;color:var(--text3);margin-top:12px;text-align:center';
-          more.textContent = `+${entries.length - 8} more sites`;
+          more.textContent = `另有 ${entries.length - 8} 个站点`;
           body.appendChild(more);
         }
         card.appendChild(body);
@@ -1027,8 +1027,8 @@ function canonMediaKey(id) {
 // OpenSubtitles numbers come from OpenSubtitles: the daily allowance at login
 // (free account 20), and what is left after each download.
 function osubQuotaText(r, fallback) {
-  if (r && r.downloads_remaining != null) return 'Logged in: ' + r.downloads_remaining + ' downloads left today';
-  if (r && r.downloads_allowed != null) return 'Logged in: your account allows ' + r.downloads_allowed + ' downloads a day';
+  if (r && r.downloads_remaining != null) return '已登录：今天还可下载 ' + r.downloads_remaining + ' 次';
+  if (r && r.downloads_allowed != null) return '已登录：你的账号每天可下载 ' + r.downloads_allowed + ' 次';
   return fallback;
 }
 
@@ -1069,7 +1069,7 @@ function myDeviceName() {
   const ua = String((typeof navigator !== 'undefined' && navigator.userAgent) || '');
   return ua.includes('Firefox') ? 'Firefox' : /Edg(A|iOS)?\//.test(ua) ? 'Edge' : 'Chrome';
 }
-function itemDevice(item) { return (item && item.device) || (item && item.fromCloud ? 'Unknown device' : myDeviceName()); }
+function itemDevice(item) { return (item && item.device) || (item && item.fromCloud ? '未知设备' : myDeviceName()); }
 
 function getHistoryItems() {
   if (historySource === 'local') return _histLocal;
@@ -1198,9 +1198,9 @@ function renderHistory(items) {
     list.replaceChildren();
     const empty = document.createElement('div');
     empty.className = 'h-empty';
-    empty.appendChild(document.createTextNode('No history yet.'));
+    empty.appendChild(document.createTextNode('还没有历史记录。'));
     empty.appendChild(document.createElement('br'));
-    empty.appendChild(document.createTextNode('Start watching to build your log.'));
+    empty.appendChild(document.createTextNode('开始观看，这里就会有记录。'));
     list.appendChild(empty);
     return;
   }
@@ -1219,7 +1219,7 @@ function renderHistory(items) {
     list.replaceChildren();
     const empty = document.createElement('div');
     empty.className = 'h-empty';
-    empty.textContent = 'No matches found.';
+    empty.textContent = '没有匹配结果。';
     list.appendChild(empty);
     return;
   }
@@ -1288,7 +1288,7 @@ function renderHistory(items) {
     if (itemDevice(item)) {
       const deviceEl = document.createElement('span');
       deviceEl.className = 'h-device';
-      deviceEl.textContent = itemDevice(item) === myDeviceName() ? itemDevice(item) + ' (this one)' : itemDevice(item);
+      deviceEl.textContent = itemDevice(item) === myDeviceName() ? itemDevice(item) + '（本机）' : itemDevice(item);
       meta.appendChild(deviceEl);
     }
     if (posStr) {
@@ -1386,18 +1386,18 @@ async function loadHistory(data) {
           })).filter(r => r.title);
           cloudItems = _histCloud;
           if (syncDot)  syncDot.className  = 'sync-dot ok';
-          if (syncText) syncText.textContent = 'Synced with Supabase - ' + cloudItems.length + ' cloud entries';
+          if (syncText) syncText.textContent = '已与 Supabase 同步 — ' + cloudItems.length + ' 条云端记录';
         } else {
-          if (syncText) syncText.textContent = 'Cloud connected - no history yet';
+          if (syncText) syncText.textContent = '云端已连接 — 暂无历史';
         }
       } else {
-        if (syncText) syncText.textContent = 'Cloud sync unavailable - check credentials';
+        if (syncText) syncText.textContent = '云同步不可用 — 请检查凭据';
       }
     } catch (_) {
-      if (syncText) syncText.textContent = 'Cloud sync offline';
+      if (syncText) syncText.textContent = '云同步离线';
     }
   } else {
-    if (syncText) syncText.textContent = 'Local only - Supabase not configured';
+    if (syncText) syncText.textContent = '仅本地 — 未配置 Supabase';
   }
 
   const filterEl = $('historyFilter');
@@ -1415,7 +1415,7 @@ async function loadHistory(data) {
     filterEl.replaceChildren();
     const allOpt = document.createElement('option');
     allOpt.value = '';
-    allOpt.textContent = 'All sites';
+    allOpt.textContent = '全部站点';
     filterEl.appendChild(allOpt);
     sites.forEach(s => {
       const opt = document.createElement('option');
@@ -1430,11 +1430,11 @@ async function loadHistory(data) {
     const devs = [...new Set((getHistoryItems() || []).map(itemDevice).filter(Boolean))].sort();
     devEl.replaceChildren();
     const all = document.createElement('option');
-    all.value = ''; all.textContent = 'All devices';
+    all.value = ''; all.textContent = '全部设备';
     devEl.appendChild(all);
     devs.forEach(d => {
       const o = document.createElement('option');
-      o.value = d; o.textContent = d === myDeviceName() ? d + ' (this one)' : d;
+      o.value = d; o.textContent = d === myDeviceName() ? d + '（本机）' : d;
       devEl.appendChild(o);
     });
     devEl.value = devs.includes(keep) ? keep : '';
@@ -1474,7 +1474,7 @@ async function loadHistory(data) {
           // Newer-wins: read the cloud first and only push rows this device changed
           // more recently. A failed read aborts: pushing blind overwrote other devices.
           const cloud = await bgSend({ type: 'SUPABASE_GET_ALL', userId });
-          if (!cloud || !Array.isArray(cloud.data)) throw new Error('cloud read failed: ' + (cloud?.err || 'no data'));
+          if (!cloud || !Array.isArray(cloud.data)) throw new Error('云端读取失败：' + (cloud?.err || '无数据'));
           const cloudTs = {};
           for (const row of cloud.data) if (row && row.media_id) cloudTs[row.media_id] = new Date(row.updated_at || 0).getTime() || 0;
           for (const [mediaId, entry] of entries) {
@@ -1492,7 +1492,7 @@ async function loadHistory(data) {
                 site_name:    entry.site_name || entry.site || '',
                 video_title:  entry.title || '',
                 page_url:     entry.url   || '',
-                device_name:  'SkipStream Options Sync',
+                device_name:  'SkipStream 设置同步',
                 ...(localTs ? { updated_at: new Date(Math.min(localTs, Date.now())).toISOString() } : {}),
               }
             });
@@ -1508,14 +1508,14 @@ async function loadHistory(data) {
         failed++;
         pushErr = String(e);
       } finally {
-        syncBtn.textContent = 'Sync';
+        syncBtn.textContent = '同步';
         if (syncText) {
           if (failed === 0) {
-            syncText.textContent = `Synced: ${pushed} entries pushed`;
+            syncText.textContent = `已同步：推送 ${pushed} 条`;
           } else if (pushed > 0) {
-            syncText.textContent = `Sync: ${pushed} pushed, ${failed} failed`;
+            syncText.textContent = `同步：成功 ${pushed} 条，失败 ${failed} 条`;
           } else {
-            syncText.textContent = 'Sync failed: ' + (pushErr || 'unknown error');
+            syncText.textContent = '同步失败：' + (pushErr || '未知错误');
           }
         }
       }
@@ -1670,12 +1670,12 @@ if (exportBtn) {
     const withSecrets = !!$('backupSecrets')?.checked;
     const pass = $('backupPass')?.value || '';
     if (withSecrets && pass.length < 8) {
-      showAlert($('alert-export'), 'err', 'Type a passphrase of at least 8 characters to include keys and logins.');
+      showAlert($('alert-export'), 'err', '要包含密钥与登录信息，请设置至少 8 个字符的口令。');
       return;
     }
     const note = withSecrets
-      ? 'This file holds your keys and logins, locked with your passphrase. Without the passphrase they cannot be restored. Continue?'
-      : 'This file holds your settings and history, without keys or logins. Continue?';
+      ? '该文件包含你的密钥与登录信息，已用口令加密。没有口令将无法恢复，是否继续？'
+      : '该文件包含你的设置与历史记录，不含密钥与登录信息。是否继续？';
     if (!confirm(note)) return;
     try {
       const all = await br.storage.local.get(null);
@@ -1692,9 +1692,9 @@ if (exportBtn) {
       a.click();
       a.remove();
       setTimeout(() => URL.revokeObjectURL(objUrl), 1000);
-      showAlert($('alert-export'), 'ok', 'Backup saved to your Downloads folder.');
+      showAlert($('alert-export'), 'ok', '备份已保存到「下载」文件夹。');
     } catch (e) {
-      showAlert($('alert-export'), 'err', 'Export failed: ' + e.message);
+      showAlert($('alert-export'), 'err', '导出失败：' + e.message);
     }
   });
 }
@@ -1797,10 +1797,10 @@ function migrateImportData(data) {
 
 // -- Import --
 const IMPORT_ERRORS = {
-  need_passphrase: 'This backup holds keys and logins. Type its passphrase above, then import again. Nothing was changed.',
-  wrong_passphrase: 'Wrong passphrase. Nothing was changed.',
-  bad_secrets: 'The keys section of this backup is damaged. Nothing was changed.',
-  bad_file: 'Not a SkipStream backup file. Nothing was changed.',
+  need_passphrase: '该备份包含密钥与登录信息。请在上方输入它的口令，然后重新导入。未做任何改动。',
+  wrong_passphrase: '口令不正确，未做任何改动。',
+  bad_secrets: '该备份的密钥部分已损坏，未做任何改动。',
+  bad_file: '这不是 SkipStream 的备份文件，未做任何改动。',
 };
 const importBtn  = $('importBtn');
 const importFile = $('importFile');
@@ -1822,18 +1822,18 @@ if (importBtn && importFile) {
       let link = '';
       if (res.installId) {
         const r = await bgSend({ type: 'ADOPT_INSTALL_ID', installId: res.installId });
-        if (r && r.ok) link = r.same ? ' Already linked to that device.' : ' This browser now shares history with the backup\'s browser' + (r.moved ? ' (' + r.moved + ' cloud entries moved over).' : '.');
-        else link = ' Devices were NOT linked: this browser\'s cloud history could not be copied. Check the connection and import again.';
+        if (r && r.ok) link = r.same ? ' 已与该设备关联。' : ' 本浏览器现在与备份文件所在的浏览器共享历史' + (r.moved ? '（已迁移 ' + r.moved + ' 条云端记录）。' : '。');
+        else link = ' 设备未能关联：本浏览器的云端历史无法复制。请检查连接后重新导入。';
       }
       const n = res.report;
-      const parts = [n.settings + ' settings', n.history + ' history entries'];
-      if (n.secrets) parts.push(n.secrets + ' keys and logins');
-      const skipped = res.skipped.length ? ' Skipped (wrong type): ' + res.skipped.join(', ') + '.' : '';
-      showAlert($('alert-export'), 'ok', 'Restored ' + parts.join(', ') + '.' + skipped + link + ' Refreshing this page...');
+      const parts = [n.settings + ' 项设置', n.history + ' 条历史记录'];
+      if (n.secrets) parts.push(n.secrets + ' 项密钥与登录信息');
+      const skipped = res.skipped.length ? ' 已跳过（类型不符）：' + res.skipped.join('、') + '。' : '';
+      showAlert($('alert-export'), 'ok', '已恢复 ' + parts.join('、') + '。' + skipped + link + ' 正在刷新页面…');
       importFile.value = '';
       setTimeout(() => location.reload(), 4000);
     } catch (e) {
-      showAlert($('alert-export'), 'err', IMPORT_ERRORS[e.message] || ('Import failed: ' + e.message));
+      showAlert($('alert-export'), 'err', IMPORT_ERRORS[e.message] || ('导入失败：' + e.message));
       importFile.value = '';
     }
   });
@@ -1843,18 +1843,18 @@ if (importBtn && importFile) {
 const clearBtn = $('clearBtn');
 if (clearBtn) {
   clearBtn.addEventListener('click', async () => {
-    if (!confirm('Clear all SkipStream data? This cannot be undone.')) return;
+    if (!confirm('确定清除全部 SkipStream 数据？此操作无法撤销。')) return;
     await br.storage.local.clear();
     try { await bgSend({ type: 'INVALIDATE_USER_ID' }); } catch (_) {}
-    showAlert($('alert-export'), 'warn', 'All data cleared. Reload the extension to start fresh.');
+    showAlert($('alert-export'), 'warn', '数据已全部清除。重新加载扩展即可从头开始。');
     loadCredentials();
   });
 }
 
 function showWelcomeToast(returningUser) {
   const msg = returningUser
-    ? 'Welcome back! Your SkipStream services are connected.'
-    : 'Welcome to SkipStream — set up your services below to get started.';
+    ? '欢迎回来！你的 SkipStream 服务已连接。'
+    : '欢迎使用 SkipStream — 在下方配置服务即可开始。';
   const toast = document.createElement('div');
   toast.textContent = msg;
   Object.assign(toast.style, {
@@ -1880,7 +1880,7 @@ if (saveAdvancedBtn) {
   saveAdvancedBtn.addEventListener('click', async () => {
     const name = ($('deviceName')?.value || '').trim();
     await br.storage.local.set({ [S.deviceName]: name });
-    showAlert($('alert-device'), 'ok', 'Device name saved.');
+    showAlert($('alert-device'), 'ok', '设备名称已保存。');
     setTimeout(() => hideAlert($('alert-device')), 2500);
   });
 }
@@ -1890,7 +1890,7 @@ if (saveAdvancedBtn) {
 const clearLocalHistoryBtn = $('clearLocalHistoryBtn');
 if (clearLocalHistoryBtn) {
   clearLocalHistoryBtn.addEventListener('click', async () => {
-    if (!confirm('Remove all local watch history from this device? Cloud history and credentials are unaffected.')) return;
+    if (!confirm('确定删除本机的全部观看历史？云端历史与凭据不受影响。')) return;
     clearLocalHistoryBtn.disabled = true;
     clearLocalHistoryBtn.textContent = 'Clearing...';
     try {
@@ -1898,12 +1898,12 @@ if (clearLocalHistoryBtn) {
       _histLocal = [];
       allHistory = getHistoryItems();
       renderHistory(allHistory);
-      showAlert($('alert-local'), 'ok', 'Local history cleared.');
+      showAlert($('alert-local'), 'ok', '本地历史已清除。');
     } catch (e) {
       showAlert($('alert-local'), 'err', 'Error: ' + e.message);
     } finally {
       clearLocalHistoryBtn.disabled = false;
-      clearLocalHistoryBtn.textContent = 'Clear Local History';
+      clearLocalHistoryBtn.textContent = '清除本地历史';
     }
   });
 }
@@ -1912,16 +1912,16 @@ if (clearLocalHistoryBtn) {
 const clearCloudHistoryBtn = $('clearCloudHistoryBtn');
 if (clearCloudHistoryBtn) {
   clearCloudHistoryBtn.addEventListener('click', async () => {
-    if (!confirm('Delete all watch history from Supabase cloud? Cannot be undone. Local history unaffected. Affects all devices sharing these credentials.')) return;
+    if (!confirm('确定删除 Supabase 云端的全部观看历史？无法撤销。本地历史不受影响，但会影响所有使用同一凭据的设备。')) return;
     clearCloudHistoryBtn.disabled = true;
     clearCloudHistoryBtn.textContent = 'Clearing...';
     try {
       const userId = await bgSend({ type: 'GET_USER_ID' }).then(r => r?.userId || null);
-      if (!userId) { showAlert($('alert-cloud'), 'err', 'No user ID — check Supabase credentials.'); return; }
+      if (!userId) { showAlert($('alert-cloud'), 'err', '没有用户 ID — 请检查 Supabase 凭据。'); return; }
       const creds = await br.storage.local.get([S.supabaseUrl, S.supabaseAnonKey]);
       const sbUrl = (creds[S.supabaseUrl] || '').replace(/\/$/, '');
       const sbKey = creds[S.supabaseAnonKey];
-      if (!sbUrl || !sbKey) { showAlert($('alert-cloud'), 'warn', 'Supabase not configured.'); return; }
+      if (!sbUrl || !sbKey) { showAlert($('alert-cloud'), 'warn', 'Supabase 未配置。'); return; }
       // Same rule as background isValidSupabaseUrl: the anon key only goes to *.supabase.co
       if (!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(sbUrl)) { showAlert($('alert-cloud'), 'err', 'Supabase URL must be https://<project>.supabase.co'); return; }
       const r = await fetch(`${sbUrl}/rest/v1/rpc/ss_clear_playback`, {
@@ -1936,13 +1936,13 @@ if (clearCloudHistoryBtn) {
           p.classList.toggle('active', p.dataset.source === 'cloud'));
         allHistory = getHistoryItems();
         renderHistory(allHistory);
-        showAlert($('alert-cloud'), 'ok', 'Cloud history cleared.');
+        showAlert($('alert-cloud'), 'ok', '云端历史已清除。');
       } else {
         const txt = await r.text().catch(() => '');
         showAlert($('alert-cloud'), 'err', `HTTP ${r.status}${txt ? ' - ' + txt.slice(0, 120) : ''}`);
       }
     } catch (e) { showAlert($('alert-cloud'), 'err', 'Error: ' + e.message); }
-    finally { clearCloudHistoryBtn.disabled = false; clearCloudHistoryBtn.textContent = 'Clear Cloud History'; }
+    finally { clearCloudHistoryBtn.disabled = false; clearCloudHistoryBtn.textContent = '清除云端历史'; }
   });
 }
 
@@ -1952,9 +1952,9 @@ if (saveOsubBtn) {
   saveOsubBtn.addEventListener('click', async () => {
     const user = ($('osobUsername')?.value || '').trim();
     const pass = ($('osobPassword')?.value || '').trim();
-    if (!user || !pass) { showAlert($('alert-osub'), 'warn', 'Enter username and password.'); return; }
+    if (!user || !pass) { showAlert($('alert-osub'), 'warn', '请输入用户名和密码。'); return; }
     saveOsubBtn.disabled = true;
-    setSpinnerLabel(saveOsubBtn, 'Logging in…');
+    setSpinnerLabel(saveOsubBtn, '正在登录…');
     await br.storage.local.set({ [S.osobUsername]: user, [S.osobPassword]: pass });
     const res = await bgSend({ type: 'OSUB_LOGIN', username: user, password: pass });
     saveOsubBtn.disabled = false;
@@ -1962,11 +1962,11 @@ if (saveOsubBtn) {
     const dotOsub = $('dot-osub');
     if (res?.ok) {
       setDot(dotOsub, 'ok');
-      const msg = osubQuotaText(res, 'Logged in successfully.');
+      const msg = osubQuotaText(res, '登录成功。');
       showAlert($('alert-osub'), 'ok', msg);
     } else {
       setDot(dotOsub, 'err');
-      showAlert($('alert-osub'), 'err', 'Login failed: ' + (res?.err || 'unknown error'));
+      showAlert($('alert-osub'), 'err', '登录失败：' + (res?.err || '未知错误'));
     }
   });
 }
@@ -1979,7 +1979,7 @@ if (logoutOsubBtn) {
     if ($('osobUsername')) $('osobUsername').value = '';
     if ($('osobPassword')) $('osobPassword').value = '';
     setDot($('dot-osub'), '');
-    showAlert($('alert-osub'), 'warn', 'Logged out.');
+    showAlert($('alert-osub'), 'warn', '已退出登录。');
   });
 }
 

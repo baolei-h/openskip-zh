@@ -211,20 +211,20 @@ test('subtitles: every OpenSubtitles host may be fetched (download links are on 
 test('backup: the card says how to save and restore in three short steps', async () => {
   const { readFileSync } = await import('node:fs');
   const html = readFileSync('options.html', 'utf8');
-  const card = html.slice(html.indexOf('Backup &amp; Restore'), html.indexOf('id="alert-export"'));
-  assert.match(card, /<strong>Save:<\/strong>/);
-  assert.match(card, /<strong>Restore:<\/strong>/);
+  const card = html.slice(html.indexOf('备份与恢复'), html.indexOf('id="alert-export"'));
+  assert.match(card, /<strong>保存：<\/strong>/);
+  assert.match(card, /<strong>恢复：<\/strong>/);
 });
 
 // ── Check this page: what each frame found (for device tests) ─────────────────
 test('page check: each player frame says what it found, the skip mode and the last skip', async () => {
   const { _diagLast, _diagAuto } = contentFns(['_diagLast', '_diagAuto'], [], { Math });
-  assert.equal(_diagLast({ key: 'sponsor', at: 1000, auto: true, notice: false, undone: false }, 13000), 'sponsor 12 s ago, automatic, NO notice');
-  assert.equal(_diagLast({ key: 'intro', at: 0, auto: true, notice: true, undone: true }, 2000), 'intro 2 s ago, automatic, notice shown, undone');
+  assert.equal(_diagLast({ key: 'sponsor', at: 1000, auto: true, notice: false, undone: false }, 13000), 'sponsor 12 秒前，自动，无提示');
+  assert.equal(_diagLast({ key: 'intro', at: 0, auto: true, notice: true, undone: true }, 2000), 'intro 2 秒前，自动，有提示，已撤销');
   assert.equal(_diagLast(null, 0), '');
-  assert.equal(_diagAuto({ skipEnabled: true, skipIntro: true }), 'auto: intros and sponsors');
-  assert.equal(_diagAuto({ skipEnabled: true }), 'ask first (button)');
-  assert.equal(_diagAuto({ skipEnabled: false, skipIntro: true }), 'skipping off');
+  assert.equal(_diagAuto({ skipEnabled: true, skipIntro: true }), '自动：片头与赞助');
+  assert.equal(_diagAuto({ skipEnabled: true }), '先询问（按钮）');
+  assert.equal(_diagAuto({ skipEnabled: false, skipIntro: true }), '跳过已关闭');
 
   const bg = loadBackground({ storage: {} });
   const run = bg.send({ type: 'SS_DIAG_RUN', tabId: 1 });
@@ -236,7 +236,7 @@ test('page check: each player frame says what it found, the skip mode and the la
   const { extractFunction } = await import('./harness.mjs');
   const diagText = vm.runInNewContext('(' + extractFunction(read('popup.js'), 'diagText') + ')', { Array, String });
   const t = diagText(j(r));
-  for (const want of ['what: tt0133093 (movie)', 'skips found: outro', 'mode: auto: outros', 'last skip: outro 3 s ago, automatic, notice shown', 'subtitles: OpenSubtitles, 1200 lines'])
+  for (const want of ['识别为：tt0133093 (movie)', '找到的跳过点：outro', '模式：auto: outros', '上次跳过：outro 3 s ago, automatic, notice shown', '字幕：OpenSubtitles, 1200 lines'])
     assert.ok(t.includes(want), want + ' missing in:\n' + t);
 });
 
@@ -253,5 +253,5 @@ test('busy pages: the walk into player components runs at most every 2 s, with a
 });
 
 test('popup: the Intros mode says it also skips YouTube sponsors', () => {
-  assert.match(read('popup.html'), /<span class="smc-name">Intros<\/span><span class="smc-desc">Intros \+ sponsors<\/span>/);
+  assert.match(read('popup.html'), /<span class="smc-name">片头<\/span><span class="smc-desc">片头 \+ 赞助<\/span>/);
 });

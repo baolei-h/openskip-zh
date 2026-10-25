@@ -732,7 +732,7 @@ function _pageUrl() {
       fontSize: '9.5px', fontWeight: '600', letterSpacing: '.12em',
       textTransform: 'uppercase', color: p.muted,
     });
-    lbl.textContent = 'Picked up where you left off';
+    lbl.textContent = '已从上次位置继续';
 
     const val = document.createElement('span');
     Object.assign(val.style, {
@@ -751,7 +751,7 @@ function _pageUrl() {
       font: '600 12px/1 inherit', cursor: 'pointer', textAlign: 'center',
       transition: 'color 140ms cubic-bezier(.22,1,.36,1), border-color 140ms cubic-bezier(.22,1,.36,1)',
     });
-    restart.textContent = 'Start over';
+    restart.textContent = '从头开始';
     restart.onmouseover = () => { restart.style.color = p.text; restart.style.borderColor = p.edgeStrong; };
     restart.onmouseout = () => { restart.style.color = p.muted; restart.style.borderColor = p.edge; };
     restart.onclick = e => {
@@ -1450,8 +1450,8 @@ function _pageUrl() {
   }
 
   const PREF_FOR_SEGMENT = { intro: 'skipIntro', recap: 'skipRecap', outro: 'skipOutro', preview: 'skipOutro', sponsor: 'skipIntro', selfpromo: 'skipIntro' };
-  const SEGMENT_LABELS   = { intro: '⏭ Skip Intro', recap: '⏭ Skip Recap', outro: '⏭ Skip Outro', preview: '⏭ Skip Preview', sponsor: '⏭ Skip Sponsor', selfpromo: '⏭ Skip Self-promo',
-    interaction: '⏭ Skip Reminder', music_offtopic: '⏭ Skip Non-music', filler: '⏭ Skip Filler' };
+  const SEGMENT_LABELS   = { intro: '⏭ 跳过片头', recap: '⏭ 跳过回顾', outro: '⏭ 跳过片尾', preview: '⏭ 跳过预告', sponsor: '⏭ 跳过赞助', selfpromo: '⏭ 跳过自我推广',
+    interaction: '⏭ 跳过求赞', music_offtopic: '⏭ 跳过非音乐', filler: '⏭ 跳过填充' };
 
   // YouTube (SponsorBlock) categories each have a mode: auto, ask (button) or off
   // (only drawn on the timeline). Sponsors and self-promo follow the Intros
@@ -1469,7 +1469,7 @@ function _pageUrl() {
   }
 
   function segmentLabel(key, segment) {
-    const base  = SEGMENT_LABELS[key] || `⏭ Skip ${key}`;
+    const base  = SEGMENT_LABELS[key] || `⏭ 跳过 ${key}`;
     const count = segment && (segment.submission_count ?? segment.report_count ?? segment.votes ?? null);
     if (!count || count < 2) return base;
     const badge = count >= 10 ? ' ★' : count >= 5 ? ' ◆' : '';
@@ -1495,9 +1495,9 @@ function _pageUrl() {
   function _milestoneText(n, sec) {
     const s = Math.max(0, Number(sec) || 0);
     const h = Math.floor(s / 3600), m = Math.round((s % 3600) / 60);
-    const saved = h ? h + ' h ' + m + ' min' : m + ' min';
-    const extra = s >= 7200 ? ' That is about ' + Math.floor(s / 5400) + ' films.' : '';
-    return n + ' skips. ' + saved + ' of your life back.' + extra;
+    const saved = h ? h + ' 小时 ' + m + ' 分钟' : m + ' 分钟';
+    const extra = s >= 7200 ? ' 大约相当于 ' + Math.floor(s / 5400) + ' 部电影。' : '';
+    return n + ' 次跳过，帮你省回 ' + saved + '。' + extra;
   }
   function _showMilestone(n, sec) {
     const fsEl = document.fullscreenElement || document.webkitFullscreenElement;
@@ -1548,7 +1548,7 @@ function _pageUrl() {
   // best pattern, written fresh here). Undo jumps back and that segment is left
   // alone until it has played past, for this video only.
   const SKIPPED_ID = 'skipstream-skipped-notice';
-  const SKIPPED_NAMES = { intro: 'intro', recap: 'recap', outro: 'outro', preview: 'preview', sponsor: 'sponsor', selfpromo: 'self-promo', interaction: 'reminder', music_offtopic: 'non-music', filler: 'filler' };
+  const SKIPPED_NAMES = { intro: '片头', recap: '回顾', outro: '片尾', preview: '预告', sponsor: '赞助片段', selfpromo: '自我推广', interaction: '求赞提醒', music_offtopic: '非音乐片段', filler: '填充内容' };
   let _skippedTimer = null;
   function showSkippedNotice(segKey, segment, video, prevTime) {
     clearTimeout(_skippedTimer);
@@ -1572,9 +1572,9 @@ function _pageUrl() {
       transition: 'opacity 240ms ease, transform 240ms ease',
     });
     const msg = document.createElement('span');
-    msg.textContent = 'Skipped ' + (SKIPPED_NAMES[segKey] || segKey);
+    msg.textContent = '已跳过' + (SKIPPED_NAMES[segKey] || segKey);
     const undo = document.createElement('button');
-    undo.textContent = 'Undo';
+    undo.textContent = '撤销';
     Object.assign(undo.style, {
       all: 'unset', boxSizing: 'border-box', cursor: 'pointer', minHeight: '44px', minWidth: '44px',
       padding: '0 16px', display: 'grid', placeItems: 'center', background: p.accent,
@@ -1673,7 +1673,7 @@ function _pageUrl() {
     });
     undoBtn.onmousedown = () => { undoBtn.style.transform = 'scale(.95)'; };
     undoBtn.onmouseup = () => { undoBtn.style.transform = 'scale(1)'; };
-    undoBtn.textContent = 'Undo';
+    undoBtn.textContent = '撤销';
 
     const doSkip = () => {
       clearInterval(_countdownTimer);
@@ -1696,7 +1696,7 @@ function _pageUrl() {
     };
 
     const update = () => {
-      msgEl.textContent = `${fullLabel} in ${secs}s`;
+      msgEl.textContent = `${fullLabel} ${secs} 秒后`;
     };
     update();
     toast.appendChild(msgEl);
@@ -2433,7 +2433,7 @@ if (e.data?.type === MSG_DO && pendingSkipFn) { pendingSkipFn(); pendingSkipFn =
     });
     btn.addEventListener('contextmenu', e => {
       e.preventDefault();
-      const v = prompt('Subtitle sync offset (seconds, e.g. -1.5):', String(_subState.sync));
+      const v = prompt('字幕同步偏移（秒，例如 -1.5）：', String(_subState.sync));
       if (v !== null && !isNaN(parseFloat(v))) {
         _subState.sync = parseFloat(v);
         br.storage.local.set({ subtitle_sync: _subState.sync }).catch(() => {});
@@ -2472,7 +2472,7 @@ if (e.data?.type === MSG_DO && pendingSkipFn) { pendingSkipFn(); pendingSkipFn =
       if (s.subtitle_override_srt) {
         _subState.subs = parseSubs(s.subtitle_override_srt);
         _subState.source = 'override';
-        _diag.subs = 'your file';
+        _diag.subs = '你的文件';
         syncCCBtn();
         return;
       }
@@ -2498,12 +2498,12 @@ if (e.data?.type === MSG_DO && pendingSkipFn) { pendingSkipFn(); pendingSkipFn =
         _subState.subs = parseSubs(result.text);
         _subState.source = 'osub';
       }
-      _diag.subs = _subState.subs.length ? 'OpenSubtitles, ' + _subState.subs.length + ' lines' : 'none (' + String(result?.err || 'no answer').slice(0, 60) + ')';
+      _diag.subs = _subState.subs.length ? 'OpenSubtitles，' + _subState.subs.length + ' lines' : '未获取（' + String(result?.err || '无响应').slice(0, 60) + ')';
     } catch { /* subtitle fetch failed, extension still works */ }
     _subState.loading = false; syncCCBtn();
   }
 
-  // Popup "Find subtitles for this video": fetch now, even if subtitles were off,
+  // Popup "为本视频查找字幕": fetch now, even if subtitles were off,
   // and report why when nothing loads.
   async function fetchSubsNow() {
     const video = _subVideo;
@@ -2526,11 +2526,11 @@ if (e.data?.type === MSG_DO && pendingSkipFn) { pendingSkipFn(); pendingSkipFn =
     } catch { result = null; }
     _subState.loading = false;
     if (location.href !== reqHref) { syncCCBtn(); return { ok: false, reason: 'navigated' }; }
-    if (!result?.ok || !result.text) { _diag.subs = 'none (' + String(result?.err || 'no answer').slice(0, 60) + ')'; syncCCBtn(); return { ok: false, reason: result?.err || 'no_answer' }; }
+    if (!result?.ok || !result.text) { _diag.subs = '未获取（' + String(result?.err || '无响应').slice(0, 60) + ')'; syncCCBtn(); return { ok: false, reason: result?.err || 'no_answer' }; }
     const subs = parseSubs(result.text);
     if (!subs.length) { syncCCBtn(); return { ok: false, reason: 'unreadable' }; }
     _subState.subs = subs; _subState.source = 'osub';
-    _diag.subs = 'OpenSubtitles, ' + subs.length + ' lines';
+    _diag.subs = 'OpenSubtitles，' + subs.length + ' lines';
     syncCCBtn();
     if (video) renderSubFrame(video);
     return { ok: true, count: subs.length, name: result.name || '' };
@@ -2698,9 +2698,9 @@ if (e.data?.type === MSG_DO && pendingSkipFn) { pendingSkipFn(); pendingSkipFn =
       await _sitePrefsReady;
       const info = await resolveShowInfo();
       if (gen !== _segGen) return;
-      _diag.id = _youtubeVideoId() ? 'YouTube video'
-        : info.imdbId ? info.imdbId + (info.season && info.episode ? ' S' + info.season + 'E' + info.episode : info.tmdbKind === 'tv' ? ' (show, no episode)' : ' (movie)') + (info.byTitle ? ', matched by title' : '')
-        : 'not identified' + (info.title ? ' (title "' + String(info.title).slice(0, 60) + '")' : '');
+      _diag.id = _youtubeVideoId() ? 'YouTube 视频'
+        : info.imdbId ? info.imdbId + (info.season && info.episode ? ' S' + info.season + 'E' + info.episode : info.tmdbKind === 'tv' ? '（剧集，无集号）' : ' (movie)') + (info.byTitle ? '，按标题匹配' : '')
+        : '未识别' + (info.title ? ' (title "' + String(info.title).slice(0, 60) + '")' : '');
 
       // Init subtitles for any identified content (movies + TV), not just skippable episodes
       if (!_subState.subs.length && !_subState.loading) {
@@ -2729,11 +2729,11 @@ if (e.data?.type === MSG_DO && pendingSkipFn) { pendingSkipFn(); pendingSkipFn =
       }
       if (!fetched && !ytId) { fetched = _pageChapters(video); _diagChapters = fetched; }
       if (!fetched && !ytId && !ids && !(anime && info.episode)) {
-        _diag.segs = 'nothing to look up';
+        _diag.segs = '没有可查询的内容';
         return;
       }
       if (gen !== _segGen) return;
-      _diag.segs = fetched ? _diagSegs(fetched, ytId ? 'SponsorBlock' : '') : 'none found (yet)';
+      _diag.segs = fetched ? _diagSegs(fetched, ytId ? 'SponsorBlock' : '') : '暂未找到';
       if (fetched) {
         resolved = true;
         segments = fetched;
@@ -2808,7 +2808,7 @@ if (e.data?.type === MSG_DO && pendingSkipFn) { pendingSkipFn(); pendingSkipFn =
       if (!active && poi && !video._ssPoiShown && video.currentTime < 60 && video.currentTime < Number(poi.start_sec) - 3) {
         video._ssPoiShown = true;
         activeSegmentKey = 'poi';
-        showSkipBtn('⤼ Jump to highlight', () => {
+        showSkipBtn('⤼ 跳到精彩处', () => {
           video.currentTime = Number(poi.start_sec);
           _diag.last = { key: 'highlight', at: Date.now(), auto: false, notice: false, undone: false };
           activeSegmentKey = '';
@@ -3107,7 +3107,7 @@ if (e.data?.type === MSG_DO && pendingSkipFn) { pendingSkipFn(); pendingSkipFn =
         if (!sg || typeof sg !== 'object') continue;
         const a = Number(sg.start_sec), b = Number(sg.end_sec);
         const when = Number.isFinite(a) ? ' ' + _diagClock(a) + (Number.isFinite(b) && b > a ? '-' + _diagClock(b) : '') : '';
-        const src = sg.src || fallbackSrc || (segs === _diagChapters ? 'page chapters' : '');
+        const src = sg.src || fallbackSrc || (segs === _diagChapters ? '页面章节' : '');
         parts.push(k + when + (src ? ' (' + src + ')' : ''));
       }
     }
@@ -3116,14 +3116,14 @@ if (e.data?.type === MSG_DO && pendingSkipFn) { pendingSkipFn(); pendingSkipFn =
   function _diagLast(l, now) {
     if (!l) return '';
     const ago = Math.max(0, Math.round((now - l.at) / 1000));
-    return l.key + ' ' + ago + ' s ago, ' + (l.auto ? 'automatic' : 'by you')
-      + (l.auto ? (l.notice ? ', notice shown' : ', NO notice') : '') + (l.undone ? ', undone' : '');
+    return l.key + ' ' + ago + ' 秒前，' + (l.auto ? '自动' : '手动')
+      + (l.auto ? (l.notice ? '，有提示' : '，无提示') : '') + (l.undone ? '，已撤销' : '');
   }
   function _diagAuto(p) {
     if (!p) return '';
-    if (!p.skipEnabled) return 'skipping off';
-    const on = [p.skipIntro && 'intros and sponsors', p.skipRecap && 'recaps', p.skipOutro && 'outros'].filter(Boolean);
-    return on.length ? 'auto: ' + on.join(', ') : 'ask first (button)';
+    if (!p.skipEnabled) return '跳过已关闭';
+    const on = [p.skipIntro && '片头与赞助', p.skipRecap && 'recaps', p.skipOutro && 'outros'].filter(Boolean);
+    return on.length ? '自动：' + on.join(', ') : '先询问（按钮）';
   }
 
   // "Check this page" in the popup: every frame reports what it sees, even one

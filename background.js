@@ -920,7 +920,7 @@ br.storage.onChanged.addListener((changes, area) => {
 // ── Service checks ────────────────────────────────────────────────────────────
 
 async function checkSupabase(supabaseUrl, supabaseAnonKey) {
-  if (!supabaseUrl || !supabaseAnonKey) return { ok: false, message: 'Not configured' };
+  if (!supabaseUrl || !supabaseAnonKey) return { ok: false, message: '未配置' };
   if (!isValidSupabaseUrl(supabaseUrl)) return { ok: false, message: 'Invalid URL - must be https://*.supabase.co' };
   try {
     const res = await fetch(`${supabaseUrl}/rest/v1/rpc/ss_verify_setup`, {
@@ -931,11 +931,11 @@ async function checkSupabase(supabaseUrl, supabaseAnonKey) {
     if (res.ok) return { ok: true, message: 'Connected' };
     if (res.status === 404 || res.status === 400) return {
       ok: false, needsManualSetup: true,
-      message: 'Table missing - run supabase_setup.sql once.',
+      message: '缺少数据表 — 请先运行一次 supabase_setup.sql。',
     };
-    if (res.status === 401 || res.status === 403) return { ok: false, message: 'Invalid credentials.' };
+    if (res.status === 401 || res.status === 403) return { ok: false, message: '凭据无效。' };
     return { ok: false, message: `Status ${res.status}` };
-  } catch (e) { return { ok: false, message: `Network error: ${String(e)}` }; }
+  } catch (e) { return { ok: false, message: `网络错误：${String(e)}` }; }
 }
 
 // ── OpenSubtitles ─────────────────────────────────────────────────────────────
@@ -977,7 +977,7 @@ async function osubLogin(username, password) {
       headers: { 'Content-Type': 'application/json', 'Api-Key': OSUB_API_KEY, 'User-Agent': OSUB_UA },
       body: JSON.stringify({ username, password }),
     });
-    if (r.status === 401) return { ok: false, err: 'Invalid credentials (401). Stop retrying.' };
+    if (r.status === 401) return { ok: false, err: '凭据无效（401），停止重试。' };
     if (!r.ok) return { ok: false, err: `HTTP ${r.status}` };
     const data = await r.json();
     const sess = {
@@ -1050,7 +1050,7 @@ async function osubDownload(file_id, sess) {
       return { ok: false, status: r.status, err: `HTTP ${r.status}${txt ? ' - ' + txt.slice(0, 120) : ''}` };
     }
     const data = await r.json();
-    if (!data.link) return { ok: false, err: 'No download link' };
+    if (!data.link) return { ok: false, err: '没有下载链接' };
 
     // Update remaining downloads in session cache (account downloads only)
     if (data.remaining !== undefined && sess?.token) {
@@ -1513,15 +1513,15 @@ br.runtime.onMessage.addListener((message, sender, sendResponse) => {
           sendResponse({
             ok: complete, data,
             message: complete
-              ? 'Setup verified — all tables, RLS policies, and triggers present.'
-              : 'Setup incomplete — some objects missing. Re-run supabase_setup.sql.',
+              ? '安装已验证 — 数据表、RLS 策略与触发器均已存在。'
+              : '安装不完整 — 有对象缺失，请重新运行 supabase_setup.sql。',
           });
         } else if (res.status === 404) {
-          sendResponse({ ok: false, needsSetup: true, message: 'ss_verify_setup() not found — run supabase_setup.sql first.' });
+          sendResponse({ ok: false, needsSetup: true, message: '未找到 ss_verify_setup() — 请先运行 supabase_setup.sql。' });
         } else {
-          sendResponse({ ok: false, message: `Verify failed: HTTP ${res.status}` });
+          sendResponse({ ok: false, message: `验证失败：HTTP ${res.status}` });
         }
-      } catch (e) { sendResponse({ ok: false, message: `Network error: ${String(e)}` }); }
+      } catch (e) { sendResponse({ ok: false, message: `网络错误：${String(e)}` }); }
     });
     return true;
   }

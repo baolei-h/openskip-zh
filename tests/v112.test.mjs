@@ -120,7 +120,7 @@ test('settings: new keys are backed up, synced and checked on import', () => {
   for (const k of ['subtitle_color', 'sbModes', 'showTimeline']) assert.ok(extractConst(bg, 'SYNC_PREF_KEYS').includes("'" + k + "'"), 'sync ' + k);
   const html = read('options.html');
   for (const id of ['subColor', 'subFont', 'subBg', 'subEdge', 'showTimeline', 'sbm-sponsor', 'sbm-filler']) assert.ok(html.includes('id="' + id + '"'), id);
-  assert.match(html, /SkipDB<\/strong><\/a> &middot; data <a href="https:\/\/opendatacommons\.org\/licenses\/odbl\/1-0\/"/);   // Sources page (1.13)
+  assert.match(html, /SkipDB<\/strong><\/a> &middot; 数据 <a href="https:\/\/opendatacommons\.org\/licenses\/odbl\/1-0\/"/);   // Sources page (1.13)
 });
 
 // ── Site report ───────────────────────────────────────────────────────────────
@@ -151,8 +151,8 @@ test('site report: the popup turns frames into readable lines', () => {
     { frame: 'vidsrc.example/embed/movie/603', top: false, skipstream: false, referrer: 'www.1shows.bz/', players: ['JW Player'], libs: ['hls.js (cdn.example)'],
       videos: [{ size: '1280x720', kind: 'stream (HLS/DASH via script)', source: 'blob (stream built in the page)', duration: 8160, playing: true, tracks: ['subtitles:en English showing'] }], iframes: [], ids: ['tmdb 603'] },
   ] }, 'v1.12.0');
-  for (const want of ['SkipStream v1.12.0 site report, 2 frames', 'iframe vidsrc.example/embed/movie/603 1280x720', 'FRAME vidsrc.example/embed/movie/603  [SkipStream not running here]',
-    'players: JW Player', 'scripts: hls.js (cdn.example)', 'video 1280x720, stream (HLS/DASH via script)', 'subtitle tracks: subtitles:en English showing', 'ids: tmdb 603'])
+  for (const want of ['SkipStream v1.12.0 站点报告，共 2 个框架', '内嵌框架 vidsrc.example/embed/movie/603 1280x720', '框架 vidsrc.example/embed/movie/603  [SkipStream 未在此运行]',
+    '播放器：JW Player', '脚本：hls.js (cdn.example)', '视频 1280x720，stream (HLS/DASH via script)', '字幕轨：subtitles:en English showing', '标识：tmdb 603'])
     assert.ok(t.includes(want), want + '\n---\n' + t);
 });
 

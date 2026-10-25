@@ -96,9 +96,9 @@ test('findActiveSegment ignores null / inverted segments', () => {
 
 test('badge reads IntroDB submission_count', () => {
   const f = contentFns(['segmentLabel'], ['SEGMENT_LABELS']);
-  assert.equal(f.segmentLabel('intro', { submission_count: 12 }), '\u23ED Skip Intro \u2605');
-  assert.equal(f.segmentLabel('intro', { submission_count: 6 }), '\u23ED Skip Intro \u25C6');
-  assert.equal(f.segmentLabel('intro', { submission_count: 1 }), '\u23ED Skip Intro');
+  assert.equal(f.segmentLabel('intro', { submission_count: 12 }), '\u23ED 跳过片头 \u2605');
+  assert.equal(f.segmentLabel('intro', { submission_count: 6 }), '\u23ED 跳过片头 \u25C6');
+  assert.equal(f.segmentLabel('intro', { submission_count: 1 }), '\u23ED 跳过片头');
 });
 
 test('iframe relay accepts every real label and rejects others (C4)', () => {

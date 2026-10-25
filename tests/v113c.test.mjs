@@ -121,7 +121,7 @@ test('sources page: 10 sources, each with a link; logos from the official site f
     assert.match(r, /<a href="https:\/\/[^"]+" target="_blank" rel="noopener"><strong>/);
   }
   assert.equal(/<img[^>]* src="https?:/.test(OPTIONS_HTML), false, 'no remote image loads when Settings opens');
-  assert.match(OPTIONS_HTML, /not endorsed, certified or otherwise approved by TMDB/);
+  assert.match(OPTIONS_HTML, /未获得 TMDB 的认可、认证或其他形式的批准/);
 });
 
 // Settings and the popup load as whole files. Up to os-133 nothing ran options.js

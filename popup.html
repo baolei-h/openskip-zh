@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -15,98 +15,98 @@
     </span>
     <span class="header-title">SkipStream</span>
     <span class="ver-badge" id="versionBadge"></span>
-    <button class="icon-btn theme-btn" id="themeBtn" title="Toggle light/dark" aria-label="Toggle light or dark theme">
+    <button class="icon-btn theme-btn" id="themeBtn" title="切换浅色/深色" aria-label="切换浅色或深色主题">
       <svg class="icon-sun" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="8" cy="8" r="3"/><line x1="8" y1="1" x2="8" y2="3"/><line x1="8" y1="13" x2="8" y2="15"/><line x1="1" y1="8" x2="3" y2="8"/><line x1="13" y1="8" x2="15" y2="8"/><line x1="3.05" y1="3.05" x2="4.46" y2="4.46"/><line x1="11.54" y1="11.54" x2="12.95" y2="12.95"/><line x1="12.95" y1="3.05" x2="11.54" y2="4.46"/><line x1="4.46" y1="11.54" x2="3.05" y2="12.95"/></svg>
       <svg class="icon-moon" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M13.5 10A6 6 0 0 1 6 2.5a6 6 0 1 0 7.5 7.5z"/></svg>
     </button>
   </header>
 
-  <div class="tab-bar" role="tablist" aria-label="Sections">
-    <button class="tab active" data-tab="status" role="tab" aria-selected="true" aria-controls="page-status">Status</button>
-    <button class="tab" data-tab="settings" role="tab" aria-selected="false" aria-controls="page-settings">Playback</button>
-    <button class="tab" data-tab="tools" role="tab" aria-selected="false" aria-controls="page-tools">Tools</button>
+  <div class="tab-bar" role="tablist" aria-label="分区">
+    <button class="tab active" data-tab="status" role="tab" aria-selected="true" aria-controls="page-status">状态</button>
+    <button class="tab" data-tab="settings" role="tab" aria-selected="false" aria-controls="page-settings">播放</button>
+    <button class="tab" data-tab="tools" role="tab" aria-selected="false" aria-controls="page-tools">工具</button>
     <span class="tab-ink" aria-hidden="true"></span>
   </div>
 
   <!-- STATUS page -->
-  <section class="page" id="page-status" role="tabpanel" aria-label="Status">
+  <section class="page" id="page-status" role="tabpanel" aria-label="状态">
 
     <div class="domain-strip" style="--i:0">
       <span class="domain-pill">
         <span id="domainDot"></span>
-        <span id="domainLabel">Detecting tab...</span>
+        <span id="domainLabel">正在识别标签页…</span>
       </span>
     </div>
 
     <div class="master-block" style="--i:1">
       <div class="master-info">
         <h1 class="master-label">SkipStream</h1>
-        <p class="master-sub" id="masterSub" aria-live="polite">Loading...</p>
+        <p class="master-sub" id="masterSub" aria-live="polite">加载中…</p>
       </div>
       <label class="toggle-lg">
-        <input type="checkbox" id="masterToggle" aria-label="Enable SkipStream">
+        <input type="checkbox" id="masterToggle" aria-label="启用 SkipStream">
         <span class="slider-lg"></span>
       </label>
     </div>
 
     <div class="ledger" style="--i:2">
       <div class="led-row">
-        <span class="led-lbl">Skips today</span>
+        <span class="led-lbl">今日跳过</span>
         <span class="led-val" id="statSkips">0</span>
       </div>
       <div class="led-row">
-        <span class="led-lbl">Time saved</span>
+        <span class="led-lbl">已节省时间</span>
         <span class="led-val" id="statTime">0s</span>
       </div>
       <div class="led-row">
-        <span class="led-lbl">Active mode</span>
-        <span class="mode-badge off" id="modeBadge">Loading</span>
+        <span class="led-lbl">当前模式</span>
+        <span class="mode-badge off" id="modeBadge">加载中</span>
       </div>
     </div>
 
     <div class="action-bar" style="--i:3">
       <button class="action-btn" id="historyBtn">
         <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6.5"/><path d="M8 4.5V8l2.5 1.5"/></svg>
-        History
+        历史
       </button>
       <button class="action-btn" id="statsBtn">
         <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="9" width="3" height="6" rx="1"/><rect x="6.5" y="5" width="3" height="10" rx="1"/><rect x="12" y="1" width="3" height="14" rx="1"/></svg>
-        Stats
+        统计
       </button>
-      <button class="action-btn gear" id="settingsBtn" title="Full settings" aria-label="Open full settings">
+      <button class="action-btn gear" id="settingsBtn" title="完整设置" aria-label="打开完整设置">
         <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><line x1="2" y1="4" x2="14" y2="4"/><line x1="2" y1="8" x2="14" y2="8"/><line x1="2" y1="12" x2="14" y2="12"/><circle cx="10.5" cy="4" r="1.7" fill="currentColor" stroke="none"/><circle cx="5.5" cy="8" r="1.7" fill="currentColor" stroke="none"/><circle cx="9" cy="12" r="1.7" fill="currentColor" stroke="none"/></svg>
       </button>
     </div>
   </section>
 
   <!-- SETTINGS page -->
-  <section class="page page-hidden" id="page-settings" role="tabpanel" aria-label="Settings">
+  <section class="page page-hidden" id="page-settings" role="tabpanel" aria-label="设置">
     <div class="skip-inner">
 
       <div class="skip-section" style="--i:0">
-        <h2 class="skip-label">Skip mode</h2>
-        <div class="skip-mode-grid" role="radiogroup" aria-label="Skip mode">
-          <button class="smode-chip" data-mode="off" role="radio" aria-checked="false"><span class="smc-name">Off</span><span class="smc-desc">Disabled</span></button>
-          <button class="smode-chip" data-mode="prompt" role="radio" aria-checked="false"><span class="smc-name">Prompt</span><span class="smc-desc">Ask first</span></button>
-          <button class="smode-chip" data-mode="auto-all" role="radio" aria-checked="false"><span class="smc-name">Auto all</span><span class="smc-desc">Everything</span></button>
-          <button class="smode-chip" data-mode="auto-ir" role="radio" aria-checked="false"><span class="smc-name">Intros + recaps</span><span class="smc-desc">Outros ask</span></button>
-          <button class="smode-chip" data-mode="auto-intro" role="radio" aria-checked="false"><span class="smc-name">Intros</span><span class="smc-desc">Intros + sponsors</span></button>
-          <button class="smode-chip" data-mode="auto-recap" role="radio" aria-checked="false"><span class="smc-name">Recaps</span><span class="smc-desc">Only recaps</span></button>
-          <button class="smode-chip" data-mode="auto-outro" role="radio" aria-checked="false"><span class="smc-name">Outros</span><span class="smc-desc">Only outros</span></button>
+        <h2 class="skip-label">跳过模式</h2>
+        <div class="skip-mode-grid" role="radiogroup" aria-label="跳过模式">
+          <button class="smode-chip" data-mode="off" role="radio" aria-checked="false"><span class="smc-name">关闭</span><span class="smc-desc">已停用</span></button>
+          <button class="smode-chip" data-mode="prompt" role="radio" aria-checked="false"><span class="smc-name">询问</span><span class="smc-desc">先询问</span></button>
+          <button class="smode-chip" data-mode="auto-all" role="radio" aria-checked="false"><span class="smc-name">全部自动</span><span class="smc-desc">全部片段</span></button>
+          <button class="smode-chip" data-mode="auto-ir" role="radio" aria-checked="false"><span class="smc-name">片头 + 回顾</span><span class="smc-desc">片尾需确认</span></button>
+          <button class="smode-chip" data-mode="auto-intro" role="radio" aria-checked="false"><span class="smc-name">片头</span><span class="smc-desc">片头 + 赞助</span></button>
+          <button class="smode-chip" data-mode="auto-recap" role="radio" aria-checked="false"><span class="smc-name">回顾</span><span class="smc-desc">仅回顾</span></button>
+          <button class="smode-chip" data-mode="auto-outro" role="radio" aria-checked="false"><span class="smc-name">片尾</span><span class="smc-desc">仅片尾</span></button>
         </div>
       </div>
 
       <div class="skip-section" style="--i:2">
-        <h2 class="skip-label">Playback</h2>
+        <h2 class="skip-label">播放</h2>
         <div class="stog-list">
-          <label class="stog-row"><span>Resume where I left off</span><span class="stog-right"><input type="checkbox" id="resumePlayback"><span class="stog-slider"></span></span></label>
-          <label class="stog-row"><span>Auto next episode</span><span class="stog-right"><input type="checkbox" id="autoNextEpisode"><span class="stog-slider"></span></span></label>
+          <label class="stog-row"><span>从上次位置继续</span><span class="stog-right"><input type="checkbox" id="resumePlayback"><span class="stog-slider"></span></span></label>
+          <label class="stog-row"><span>自动播放下一集</span><span class="stog-right"><input type="checkbox" id="autoNextEpisode"><span class="stog-slider"></span></span></label>
         </div>
       </div>
 
       <div class="skip-section" style="--i:3">
-        <h2 class="skip-label">Speed</h2>
-        <div class="speed-row" role="radiogroup" aria-label="Playback speed">
+        <h2 class="skip-label">速度</h2>
+        <div class="speed-row" role="radiogroup" aria-label="播放速度">
           <button class="speed-chip" data-rate="0.75" role="radio" aria-checked="false">0.75x</button>
           <button class="speed-chip" data-rate="1" role="radio" aria-checked="false">1x</button>
           <button class="speed-chip" data-rate="1.25" role="radio" aria-checked="false">1.25x</button>
@@ -116,45 +116,45 @@
       </div>
 
       <div class="skip-section" style="--i:4">
-        <h2 class="skip-label">Subtitles</h2>
+        <h2 class="skip-label">字幕</h2>
         <div class="sub-row">
           <button class="sub-upload-btn" id="subFetchBtn">
             <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>
-            Find subtitles for this video
+            为本视频查找字幕
           </button>
-          <button class="sub-clear-btn" id="subClearBtn" title="Remove the loaded subtitles" aria-label="Remove the loaded subtitles">&times;</button>
+          <button class="sub-clear-btn" id="subClearBtn" title="移除已加载的字幕" aria-label="移除已加载的字幕">&times;</button>
         </div>
-        <span class="sub-status" id="subStatus" aria-live="polite">Your own .srt / .vtt: click CC on the video</span>
+        <span class="sub-status" id="subStatus" aria-live="polite">使用自己的 .srt / .vtt：点击视频上的 CC</span>
         <div class="sub-lang-row">
-          <label class="skip-label" for="subLangSelect">Language</label>
+          <label class="skip-label" for="subLangSelect">语言</label>
           <select id="subLangSelect" class="sub-lang-select">
-            <option value="en">English</option>
-            <option value="ta">Tamil</option>
-            <option value="hi">Hindi</option>
-            <option value="te">Telugu</option>
-            <option value="ml">Malayalam</option>
-            <option value="bn">Bengali</option>
-            <option value="es">Spanish</option>
-            <option value="fr">French</option>
-            <option value="de">German</option>
-            <option value="pt">Portuguese</option>
-            <option value="it">Italian</option>
-            <option value="ru">Russian</option>
-            <option value="ar">Arabic</option>
-            <option value="zh-CN">Chinese (S)</option>
-            <option value="zh-TW">Chinese (T)</option>
-            <option value="ja">Japanese</option>
-            <option value="ko">Korean</option>
-            <option value="tr">Turkish</option>
-            <option value="nl">Dutch</option>
-            <option value="pl">Polish</option>
-            <option value="sv">Swedish</option>
-            <option value="uk">Ukrainian</option>
-            <option value="vi">Vietnamese</option>
-            <option value="id">Indonesian</option>
-            <option value="fa">Persian</option>
-            <option value="he">Hebrew</option>
-            <option value="el">Greek</option>
+            <option value="en">英语</option>
+            <option value="ta">泰米尔语</option>
+            <option value="hi">印地语</option>
+            <option value="te">泰卢固语</option>
+            <option value="ml">马拉雅拉姆语</option>
+            <option value="bn">孟加拉语</option>
+            <option value="es">西班牙语</option>
+            <option value="fr">法语</option>
+            <option value="de">德语</option>
+            <option value="pt">葡萄牙语</option>
+            <option value="it">意大利语</option>
+            <option value="ru">俄语</option>
+            <option value="ar">阿拉伯语</option>
+            <option value="zh-CN">中文（简体）</option>
+            <option value="zh-TW">中文（繁体）</option>
+            <option value="ja">日语</option>
+            <option value="ko">韩语</option>
+            <option value="tr">土耳其语</option>
+            <option value="nl">荷兰语</option>
+            <option value="pl">波兰语</option>
+            <option value="sv">瑞典语</option>
+            <option value="uk">乌克兰语</option>
+            <option value="vi">越南语</option>
+            <option value="id">印尼语</option>
+            <option value="fa">波斯语</option>
+            <option value="he">希伯来语</option>
+            <option value="el">希腊语</option>
           </select>
         </div>
       </div>
@@ -163,25 +163,25 @@
   </section>
 
   <!-- TOOLS page -->
-  <section class="page page-hidden" id="page-tools" role="tabpanel" aria-label="Tools">
+  <section class="page page-hidden" id="page-tools" role="tabpanel" aria-label="工具">
     <div class="skip-inner">
       <div class="skip-section" style="--i:4">
-        <h2 class="skip-label">Video not detected?</h2>
-        <p class="tool-help">Check this page: what SkipStream sees in each frame. Site report: players, streams and subtitle tracks, to paste into a bug report.</p>
+        <h2 class="skip-label">没有识别到视频？</h2>
+        <p class="tool-help">检查本页：查看 SkipStream 在每一帧里看到的内容。站点报告：播放器、流与字幕轨，可直接粘贴到问题反馈中。</p>
         <div class="sub-row">
-          <button class="sub-upload-btn" id="diagBtn">Check this page</button>
-          <button class="sub-upload-btn" id="siteReportBtn">Site report</button>
+          <button class="sub-upload-btn" id="diagBtn">检查本页</button>
+          <button class="sub-upload-btn" id="siteReportBtn">站点报告</button>
         </div>
-        <span class="sub-status" id="diagStatus" aria-live="polite" style="white-space:pre-line">Lists every frame and the videos SkipStream can see.</span>
-        <textarea id="siteReportText" readonly spellcheck="false" aria-label="Site report" style="display:none;width:100%;box-sizing:border-box;height:140px;margin-top:6px;font:11px/1.35 ui-monospace,Consolas,monospace;resize:vertical"></textarea>
-        <button class="sub-upload-btn" id="siteReportCopy" style="display:none;margin-top:6px">Copy report</button>
+        <span class="sub-status" id="diagStatus" aria-live="polite" style="white-space:pre-line">列出每一帧，以及 SkipStream 能看到的视频。</span>
+        <textarea id="siteReportText" readonly spellcheck="false" aria-label="站点报告" style="display:none;width:100%;box-sizing:border-box;height:140px;margin-top:6px;font:11px/1.35 ui-monospace,Consolas,monospace;resize:vertical"></textarea>
+        <button class="sub-upload-btn" id="siteReportCopy" style="display:none;margin-top:6px">复制报告</button>
       </div>
 
     </div>
   </section>
 
 </div>
-<footer><a href="https://github.com/govinda-rajulu/openskip" target="_blank" rel="noopener">GitHub</a><span aria-hidden="true">·</span><a href="https://github.com/govinda-rajulu/openskip/blob/main/PRIVACY.md" target="_blank" rel="noopener">Privacy</a><span aria-hidden="true">·</span><a href="#" id="sourcesLink">Sources</a><span aria-hidden="true">·</span><a href="https://github.com/govinda-rajulu/openskip/issues" target="_blank" rel="noopener">Report a problem</a></footer>
+<footer><a href="https://github.com/baolei-h/openskip-zh" target="_blank" rel="noopener">GitHub</a><span aria-hidden="true">·</span><a href="https://github.com/baolei-h/openskip-zh/blob/main/PRIVACY.md" target="_blank" rel="noopener">隐私</a><span aria-hidden="true">·</span><a href="#" id="sourcesLink">数据来源</a><span aria-hidden="true">·</span><a href="https://github.com/baolei-h/openskip-zh/issues" target="_blank" rel="noopener">反馈问题</a></footer>
 <script src="theme-engine.js"></script>
 <script src="popup.js"></script>
 </body>

@@ -492,7 +492,7 @@ test('subtitles: letter edge is outline, drop shadow, raised or none; old outlin
   assert.equal(look({ outline: false, edge: 'shadow' }), look({ edge: 'shadow' }), 'a saved edge wins');
   assert.equal(look({ edge: 'constructor' }), look({}), 'unknown values fall back to outline');
   const html = read('options.html');
-  assert.match(html, /<select id="subEdge">\s*<option value="outline">Outline<\/option>\s*<option value="shadow">Drop shadow<\/option>\s*<option value="raised">Raised<\/option>\s*<option value="depressed">Depressed<\/option>\s*<option value="glow">Soft glow<\/option>\s*<option value="none">None<\/option>/);
+  assert.match(html, /<select id="subEdge">\s*<option value="outline">描边<\/option>\s*<option value="shadow">投影<\/option>\s*<option value="raised">凸起<\/option>\s*<option value="depressed">凹下<\/option>\s*<option value="glow">柔光<\/option>\s*<option value="none">无<\/option>/);
   assert.ok(html.includes('id="subFontSize"'), 'text size slider is still there');
 });
 
@@ -551,8 +551,8 @@ test('site report: every list stops at 30; no performance or Firefox globals is 
 test('site report: the popup prints the deep scan in labelled groups', () => {
   const siteReportText = vm.runInNewContext('(' + extractFunction(read('popup.js'), 'siteReportText') + ')', { Array });
   const t = siteReportText({ ok: true, frames: [{ frame: '1shows.bz/movie/603', top: true, skipstream: true, ...probeRun() }] }, 'v1.13.0');
-  for (const want of ['  page player code: jwplayer 8.33.0, videojs, Hls 1.5.7', '  source buttons (4):', '    Server 1 -> vidsrc.xyz/embed/movie/603',
-    '  lazy frames (1):', '  subtitle files (1):', '  media loaded (1):', '    cdn.example/hls/index.m3u8 (xmlhttprequest)', '  media in scripts (1):'])
+  for (const want of ['  页面播放器代码：jwplayer 8.33.0, videojs, Hls 1.5.7', '  片源按钮（4）：', '    Server 1 -> vidsrc.xyz/embed/movie/603',
+    '  延迟加载框架（1）：', '  字幕文件（1）：', '  已加载媒体（1）：', '    cdn.example/hls/index.m3u8 (xmlhttprequest)', '  脚本中的媒体（1）：'])
     assert.ok(t.includes(want), want + '\n---\n' + t);
 });
 
@@ -586,7 +586,7 @@ test('supabase: a publishable key goes in apikey only; a legacy JWT key also as 
   const h = bg.calls.find((x) => x.url.endsWith('/rpc/ss_put_playback')).opts.headers;
   assert.equal(h.apikey, 'sb_publishable_abc123');
   assert.equal('Authorization' in h, false);
-  assert.match(read('options.html'), /placeholder="sb_publishable_… or eyJhbGci…"/);
+  assert.match(read('options.html'), /placeholder="sb_publishable_… 或 eyJhbGci…"/);
 });
 
 test('resume: a history click is honoured for 120 s (slow phones); local history keeps 300', () => {
@@ -679,13 +679,13 @@ test('resume: "Continued from" is off by default, a switch in Settings, synced a
 
 test('opensubtitles: the texts match OpenSubtitles (5 without an account, 20 with a free one); live numbers win', () => {
   const html = read('options.html');
-  assert.match(html, /Without an account: 5 downloads a day\. With a <a [^>]+>free account<\/a>: 20 a day\./);
+  assert.match(html, /无账号每天可下载 5 次。使用\s*<a [^>]+>免费账号<\/a>：每天 20 次。/);
   for (const src of [html, OPTIONS, read('README.md')]) assert.doesNotMatch(src, /200\/day|up to 200|200 subtitle downloads/);
   assert.match(BG, /downloads_allowed: data\.user\?\.allowed_downloads \?\? null,\n\s*downloads_remaining: null,/, 'the allowance is not "remaining"');
   const q = vm.runInNewContext(extractFunction(OPTIONS, 'osubQuotaText') + ';osubQuotaText');
-  assert.equal(q({ downloads_remaining: 17, downloads_allowed: 20 }, 'x'), 'Logged in: 17 downloads left today');
-  assert.equal(q({ downloads_remaining: null, downloads_allowed: 20 }, 'x'), 'Logged in: your account allows 20 downloads a day');
-  assert.equal(q({}, 'Logged in'), 'Logged in');
+  assert.equal(q({ downloads_remaining: 17, downloads_allowed: 20 }, 'x'), '已登录：今天还可下载 17 次');
+  assert.equal(q({ downloads_remaining: null, downloads_allowed: 20 }, 'x'), '已登录：你的账号每天可下载 20 次');
+  assert.equal(q({}, '已登录'), '已登录');
   assert.doesNotMatch(OPTIONS, /downloads remaining today/);
 });
 
@@ -722,9 +722,9 @@ test('history: rows show and filter by the device that played them last', () => 
   const k = histKit('Govind laptop');
   assert.equal(k.itemDevice({ device: 'Pixel 8', fromCloud: true }), 'Pixel 8');
   assert.equal(k.itemDevice({ fromCloud: false }), 'Govind laptop', 'this browser\'s own rows use its device name');
-  assert.equal(k.itemDevice({ fromCloud: true }), 'Unknown device', 'technical data off on the other device');
+  assert.equal(k.itemDevice({ fromCloud: true }), '未知设备', 'technical data off on the other device');
   assert.equal(histKit('', 'Mozilla/5.0 (Android) EdgA/120').myDeviceName(), 'Edge');
-  assert.ok(read('options.html').includes('<select id="historyDevice" class="hist-select" aria-label="Device">'));
+  assert.ok(read('options.html').includes('<select id="historyDevice" class="hist-select" aria-label="设备">'));
   assert.match(OPTIONS, /&& \(!devFilter \|\| itemDevice\(item\) === devFilter\);/);
   assert.match(OPTIONS, /\$\('historyDevice'\)\?\.addEventListener\('change', \(\) => renderHistory\(allHistory\)\);/);
 });
@@ -806,7 +806,7 @@ test('page check: every frame answers, even if SkipStream stopped while starting
   assert.match(BG, /started: r\.started !== false, error: String\(r\.error \|\| ''\)\.slice\(0, 120\),/);
   const diagText = vm.runInNewContext('(' + extractFunction(read('popup.js'), 'diagText') + ')', { Array });
   const t = diagText({ ok: true, frames: [{ frame: 'www.viduki.net/1/movie/603', top: false, videos: 1, started: false, error: 'x is not defined' }] });
-  assert.ok(t.includes('SkipStream did not finish starting in this frame: x is not defined'), t);
+  assert.ok(t.includes('SkipStream 在此框架中未能完成启动：x is not defined'), t);
 });
 
 test('site report: each frame also shows what SkipStream itself sees, and the video position', () => {
@@ -820,8 +820,8 @@ test('site report: each frame also shows what SkipStream itself sees, and the vi
   assert.equal(r.videos[0].at, 612);
   const siteReportText = vm.runInNewContext('(' + extractFunction(read('popup.js'), 'siteReportText') + ')', { Array });
   const t = siteReportText({ ok: true, frames: [{ frame: 'www.viduki.net/1/movie/603', top: false, skipstream: true, ...r }] }, 'v1.13.0');
-  assert.ok(t.includes('  SkipStream: running, 1 video(s) in use, what: movie tt0133093, skips: intro, outro'), t);
-  assert.ok(t.includes('8181 s, playing at 612 s'), t);
+  assert.ok(t.includes('  SkipStream：运行中，正在使用 1 个视频，识别为：movie tt0133093，跳过点：intro, outro'), t);
+  assert.ok(t.includes('8181 秒，播放中，位于 612 秒'), t);
 });
 
 test('subtitles: Netflix and Prime Video styles use their fonts only if the device has them', () => {
@@ -829,8 +829,8 @@ test('subtitles: Netflix and Prime Video styles use their fonts only if the devi
   assert.match(_subLook({ font: 'netflix' }).fontFamily, /^"Netflix Sans",.*Arial,sans-serif$/);
   assert.match(_subLook({ font: 'prime' }).fontFamily, /^"Amazon Ember",.*sans-serif$/);
   const html = read('options.html');
-  assert.ok(html.includes('<option value="netflix">Streaming: Netflix style</option>') && html.includes('<option value="prime">Streaming: Prime Video style</option>'));
-  assert.match(html, /SkipStream cannot include them/);
+  assert.ok(html.includes('<option value="netflix">流媒体：Netflix 风格</option>') && html.includes('<option value="prime">流媒体：Prime Video 风格</option>'));
+  assert.match(html, /SkipStream 无法内置/);
   assert.doesNotMatch(read('manifest.json') + read('options.css'), /@font-face|fonts\.googleapis/, 'no font is downloaded');
 });
 

@@ -72,18 +72,18 @@ async function detectDomain() {
     if (!tab?.url) return;
     const url = new URL(tab.url);
     if (!url.hostname || ['chrome:', 'about:', 'moz-extension:', 'chrome-extension:'].includes(url.protocol)) {
-      $('domainLabel').textContent = 'No active video tab'; return;
+      $('domainLabel').textContent = '没有正在播放视频的标签页'; return;
     }
     $('domainLabel').textContent = url.hostname.replace(/^www\./, '');
     $('domainDot').classList.add('active');
-  } catch { $('domainLabel').textContent = 'No active video tab'; }
+  } catch { $('domainLabel').textContent = '没有正在播放视频的标签页'; }
 }
 
 // -- Mode labels --
 const MODE_LABELS = {
-  off: 'Disabled', prompt: 'Prompt',
-  'auto-intro': 'Auto Intros', 'auto-recap': 'Auto Recaps',
-  'auto-outro': 'Auto Outros', 'auto-ir': 'Intros + Recaps', 'auto-all': 'Auto All',
+  off: '已停用', prompt: '询问',
+  'auto-intro': '自动跳过片头', 'auto-recap': '自动跳过回顾',
+  'auto-outro': '自动跳过片尾', 'auto-ir': '片头 + 回顾', 'auto-all': '全部自动',
 };
 
 // -- Mode <-> Toggle bidirectional mapping --
@@ -166,7 +166,7 @@ document.querySelectorAll('.smode-chip').forEach(chip => {
     const mt = $('masterToggle');
     if (mt) mt.checked = chip.dataset.mode !== 'off';
     const ms = $('masterSub');
-    if (ms) ms.textContent = chip.dataset.mode !== 'off' ? 'Extension is active' : 'Extension is paused';
+    if (ms) ms.textContent = chip.dataset.mode !== 'off' ? '扩展已启用' : '扩展已暂停';
   });
 });
 
@@ -248,7 +248,7 @@ $('masterToggle')?.addEventListener('change', () => {
     [KEYS.skipRecap]: nextSeg.r,
     [KEYS.skipOutro]: nextSeg.o,
   });
-  $('masterSub').textContent = enabled ? 'Extension is active' : 'Extension is paused';
+  $('masterSub').textContent = enabled ? '扩展已启用' : '扩展已暂停';
   applyModeToUI(nextMode, enabled);
 });
 
@@ -266,7 +266,7 @@ async function loadState() {
   if (window.applyThemeFromSeed) applyThemeFromSeed(data[KEYS.seedColor] || '#57A860', currentTheme);
   const mtEl = $('masterToggle');
   if (mtEl) mtEl.checked = enabled;
-  $('masterSub').textContent = enabled ? 'Extension is active' : 'Extension is paused';
+  $('masterSub').textContent = enabled ? '扩展已启用' : '扩展已暂停';
 
   popupRate = parseFloat(data[KEYS.playRate]) || 1;
   document.querySelectorAll('.speed-chip').forEach(c => {
@@ -283,7 +283,7 @@ async function loadState() {
 
   // Subtitle state
   const subStatus = $('subStatus');
-  if (subStatus && data[KEYS.subSrt]) subStatus.textContent = 'Your subtitle file is loaded';
+  if (subStatus && data[KEYS.subSrt]) subStatus.textContent = '已加载你的字幕文件';
   if ($('subLangSelect') && data[KEYS.subLang]) $('subLangSelect').value = data[KEYS.subLang];
 }
 
@@ -291,24 +291,24 @@ async function loadState() {
 // No file picker here: Firefox closes the popup the moment a file dialog opens
 // (Mozilla bug 1378527). Your own file goes in through the CC button on the video.
 const SUB_REASONS = {
-  no_player:  'No video player found on this tab. Start the video, then try again.',
-  no_id:      'Could not identify this video. A TMDB key in Options lets SkipStream match titles, or load your own file with the CC button on the video.',
-  youtube:    'YouTube videos are not films or episodes, so OpenSubtitles has nothing to match. Load your own file with the CC button on the video.',
-  no_results: 'OpenSubtitles has no subtitles for this video in your language or English.',
-  navigated:  'The page changed while searching. Try again.',
-  unreadable: 'A subtitle file came back but had no readable lines.',
+  no_player:  '此标签页里没有找到视频播放器。请先开始播放，然后重试。',
+  no_id:      '无法识别这个视频。在设置里填写 TMDB 密钥可让 SkipStream 匹配片名，也可以点击视频上的 CC 按钮加载自己的字幕文件。',
+  youtube:    'YouTube 视频不是电影或剧集，OpenSubtitles 没有可匹配的内容。请点击视频上的 CC 按钮加载你自己的字幕文件。',
+  no_results: 'OpenSubtitles 上没有这部视频的对应语言或英文字幕。',
+  navigated:  '搜索过程中页面发生了变化，请重试。',
+  unreadable: '取回的字幕文件里没有可读取的行。',
 };
 
 function subReason(r) {
   if (!r) return SUB_REASONS.no_player;
-  if (r.ok) return 'Loaded ' + r.count + ' lines' + (r.name ? ' from ' + r.name : '');
-  return SUB_REASONS[r.reason] || ('OpenSubtitles said: ' + String(r.reason || 'no answer').slice(0, 120));
+  if (r.ok) return '已加载 ' + r.count + ' 行' + (r.name ? '（来自 ' + r.name + '）' : '');
+  return SUB_REASONS[r.reason] || ('OpenSubtitles 返回：' + String(r.reason || '无响应').slice(0, 120));
 }
 
 $('subFetchBtn')?.addEventListener('click', async () => {
   const btn = $('subFetchBtn'); const s = $('subStatus');
   if (btn) btn.disabled = true;
-  if (s) s.textContent = 'Searching OpenSubtitles...';
+  if (s) s.textContent = '正在搜索 OpenSubtitles…';
   let r = null;
   try {
     const [tab] = await br.tabs.query({ active: true, currentWindow: true });
@@ -320,22 +320,21 @@ $('subFetchBtn')?.addEventListener('click', async () => {
 
 // "Check this page": every frame reports what it sees (background runPageCheck).
 function diagText(r) {
-  if (!r || !r.ok) return 'Could not check this page. Reload it and try again.';
+  if (!r || !r.ok) return '无法检查本页。请刷新页面后重试。';
   const f = Array.isArray(r.frames) ? r.frames : [];
-  if (!f.length) return 'SkipStream is not running on this page. Browser pages and the add-ons store are off limits; on other sites, reload the page.';
-  const plural = (n, w) => n + ' ' + w + (n === 1 ? '' : 's');
-  const lines = f.map(x => (x.top ? 'Page ' : 'Frame ') + x.frame + ': ' + plural(x.videos, 'video')
-    + (x.hidden ? ', ' + x.hidden + ' inside a player' : '')
-    + (x.blankFrames ? ', ' + plural(x.blankFrames, 'blank frame') : '')
-    + (x.attached ? ', in use' : '')
-    + (x.attached && x.ident ? '\n  what: ' + x.ident : '')
-    + (x.attached && x.segs ? '\n  skips found: ' + x.segs : '')
-    + (x.attached && x.auto ? '\n  mode: ' + x.auto : '')
-    + (x.attached && x.last ? '\n  last skip: ' + x.last : '')
-    + (x.attached && x.subs ? '\n  subtitles: ' + x.subs : '')
-    + (x.started === false ? '\n  SkipStream did not finish starting in this frame' + (x.error ? ': ' + x.error : '') : (x.error ? '\n  error: ' + x.error : '')));
-  const head = f.some(x => x.attached) ? 'SkipStream is watching a video here.'
-    : 'No video in use yet. Press play first (on movie sites pick a source), then check again while it plays.';
+  if (!f.length) return 'SkipStream 没有在这个页面上运行。浏览器内置页面和扩展商店页面不允许注入脚本；其他网站请刷新页面。';
+  const lines = f.map(x => (x.top ? '页面 ' : '框架 ') + x.frame + '：' + x.videos + ' 个视频'
+    + (x.hidden ? '，' + x.hidden + ' 个在播放器内部' : '')
+    + (x.blankFrames ? '，' + x.blankFrames + ' 个空白画面' : '')
+    + (x.attached ? '，正在使用' : '')
+    + (x.attached && x.ident ? '\n  识别为：' + x.ident : '')
+    + (x.attached && x.segs ? '\n  找到的跳过点：' + x.segs : '')
+    + (x.attached && x.auto ? '\n  模式：' + x.auto : '')
+    + (x.attached && x.last ? '\n  上次跳过：' + x.last : '')
+    + (x.attached && x.subs ? '\n  字幕：' + x.subs : '')
+    + (x.started === false ? '\n  SkipStream 在此框架中未能完成启动' + (x.error ? '：' + x.error : '') : (x.error ? '\n  错误：' + x.error : '')));
+  const head = f.some(x => x.attached) ? 'SkipStream 正在这里跟踪一个视频。'
+    : '还没有正在使用的视频。请先开始播放（影视站需要先选择片源），播放中再检查一次。';
   return head + '\n' + lines.join('\n');
 }
 
@@ -343,32 +342,32 @@ function diagText(r) {
 // every frame (content-scripts/probe.js). Shown here and copied only on request;
 // addresses are host + path only.
 function siteReportText(r, version) {
-  if (!r || !r.ok) return 'Could not read this page' + (r && r.err ? ': ' + r.err : '') + '. Reload it and try again.';
+  if (!r || !r.ok) return '无法读取本页' + (r && r.err ? '：' + r.err : '') + '。请刷新后重试。';
   const f = Array.isArray(r.frames) ? r.frames : [];
-  const L = ['SkipStream ' + (version || '') + ' site report, ' + f.length + ' frame' + (f.length === 1 ? '' : 's')];
+  const L = ['SkipStream ' + (version || '') + ' 站点报告，共 ' + f.length + ' 个框架'];
   for (const x of f) {
     L.push('');
-    L.push((x.top ? 'PAGE ' : 'FRAME ') + x.frame + (x.skipstream ? '' : '  [SkipStream not running here]'));
-    if (x.title) L.push('  title: ' + x.title);
-    if (!x.top && x.referrer) L.push('  referrer: ' + x.referrer);
-    if (x.players && x.players.length) L.push('  players: ' + x.players.join(', '));
-    if (x.libs && x.libs.length) L.push('  scripts: ' + x.libs.join(', '));
+    L.push((x.top ? '页面 ' : '框架 ') + x.frame + (x.skipstream ? '' : '  [SkipStream 未在此运行]'));
+    if (x.title) L.push('  标题：' + x.title);
+    if (!x.top && x.referrer) L.push('  来源页：' + x.referrer);
+    if (x.players && x.players.length) L.push('  播放器：' + x.players.join(', '));
+    if (x.libs && x.libs.length) L.push('  脚本：' + x.libs.join(', '));
     for (const v of x.videos || []) {
-      L.push('  video ' + v.size + ', ' + v.kind + (v.source ? ' (' + v.source + ')' : '') + ', ' + (v.duration ? v.duration + ' s' : 'no length') + (v.playing ? ', playing' : ', paused') + (v.at ? ' at ' + v.at + ' s' : '') + (v.inShadow ? ', inside a player component' : ''));
-      if (v.tracks && v.tracks.length) L.push('    subtitle tracks: ' + v.tracks.join('; '));
+      L.push('  视频 ' + v.size + '，' + v.kind + (v.source ? '（' + v.source + '）' : '') + '，' + (v.duration ? v.duration + ' 秒' : '无时长') + (v.playing ? '，播放中' : '，已暂停') + (v.at ? '，位于 ' + v.at + ' 秒' : '') + (v.inShadow ? '，位于播放器组件内部' : ''));
+      if (v.tracks && v.tracks.length) L.push('    字幕轨：' + v.tracks.join('; '));
     }
-    for (const fr of x.iframes || []) L.push('  iframe ' + fr.src + ' ' + fr.size + (fr.sandbox ? ' sandbox=' + fr.sandbox : ''));
-    if (x.ids && x.ids.length) L.push('  ids: ' + x.ids.join(', '));
-    if (x.ss) L.push('  SkipStream: ' + (x.ss.started === false ? 'did not finish starting' : 'running') + ', ' + (Number(x.ss.attached) || 0) + ' video(s) in use'
-      + (x.ss.ident ? ', what: ' + x.ss.ident : '') + (x.ss.segs ? ', skips: ' + x.ss.segs : '') + (x.ss.error ? ', error: ' + x.ss.error : ''));
-    if (x.globals && x.globals.length) L.push('  page player code: ' + x.globals.join(', '));
-    const many = (head, list) => { if (list && list.length) { L.push('  ' + head + ' (' + list.length + '):'); for (const s of list) L.push('    ' + s); } };
-    many('source buttons', x.sources);
-    many('lazy frames', x.lazyFrames);
-    many('subtitle files', x.trackFiles);
-    many('media loaded', x.loaded);
-    many('media in scripts', x.inScripts);
-    if (x.error) L.push('  error: ' + x.error);
+    for (const fr of x.iframes || []) L.push('  内嵌框架 ' + fr.src + ' ' + fr.size + (fr.sandbox ? ' sandbox=' + fr.sandbox : ''));
+    if (x.ids && x.ids.length) L.push('  标识：' + x.ids.join(', '));
+    if (x.ss) L.push('  SkipStream：' + (x.ss.started === false ? '未完成启动' : '运行中') + '，正在使用 ' + (Number(x.ss.attached) || 0) + ' 个视频'
+      + (x.ss.ident ? '，识别为：' + x.ss.ident : '') + (x.ss.segs ? '，跳过点：' + x.ss.segs : '') + (x.ss.error ? '，错误：' + x.ss.error : ''));
+    if (x.globals && x.globals.length) L.push('  页面播放器代码：' + x.globals.join(', '));
+    const many = (head, list) => { if (list && list.length) { L.push('  ' + head + '（' + list.length + '）：'); for (const s of list) L.push('    ' + s); } };
+    many('片源按钮', x.sources);
+    many('延迟加载框架', x.lazyFrames);
+    many('字幕文件', x.trackFiles);
+    many('已加载媒体', x.loaded);
+    many('脚本中的媒体', x.inScripts);
+    if (x.error) L.push('  错误：' + x.error);
   }
   return L.join('\n');
 }
@@ -376,7 +375,7 @@ function siteReportText(r, version) {
 $('siteReportBtn')?.addEventListener('click', async () => {
   const btn = $('siteReportBtn'); const s = $('diagStatus'); const ta = $('siteReportText'); const cp = $('siteReportCopy');
   if (btn) btn.disabled = true;
-  if (s) s.textContent = 'Reading every frame...';
+  if (s) s.textContent = '正在读取每一帧…';
   let r = null;
   try {
     const [tab] = await br.tabs.query({ active: true, currentWindow: true });
@@ -385,21 +384,21 @@ $('siteReportBtn')?.addEventListener('click', async () => {
   const text = siteReportText(r, 'v' + br.runtime.getManifest().version);
   if (ta) { ta.value = text; ta.style.display = 'block'; }
   if (cp) cp.style.display = r && r.ok ? 'inline-block' : 'none';
-  if (s) s.textContent = r && r.ok ? 'Site report ready. Copy it and paste it into the chat or an issue.' : text;
+  if (s) s.textContent = r && r.ok ? '站点报告已生成。复制后可粘贴到对话或问题反馈中。' : text;
   if (btn) btn.disabled = false;
 });
 
 $('siteReportCopy')?.addEventListener('click', async () => {
   const ta = $('siteReportText'); const s = $('diagStatus');
   if (!ta) return;
-  try { await navigator.clipboard.writeText(ta.value); if (s) s.textContent = 'Copied.'; }
-  catch (_) { ta.focus(); ta.select(); if (s) s.textContent = 'Selected: press Ctrl+C to copy.'; }
+  try { await navigator.clipboard.writeText(ta.value); if (s) s.textContent = '已复制。'; }
+  catch (_) { ta.focus(); ta.select(); if (s) s.textContent = '已选中：按 Ctrl+C 复制。'; }
 });
 
 $('diagBtn')?.addEventListener('click', async () => {
   const btn = $('diagBtn'); const s = $('diagStatus');
   if (btn) btn.disabled = true;
-  if (s) s.textContent = 'Checking every frame...';
+  if (s) s.textContent = '正在检查每一帧…';
   let r = null;
   try {
     const [tab] = await br.tabs.query({ active: true, currentWindow: true });
@@ -412,7 +411,7 @@ $('diagBtn')?.addEventListener('click', async () => {
 $('subClearBtn')?.addEventListener('click', async () => {
   await br.storage.local.remove(KEYS.subSrt);
   const s = $('subStatus');
-  if (s) s.textContent = 'Subtitles removed. Your own .srt / .vtt: click CC on the video';
+  if (s) s.textContent = '字幕已移除。使用自己的 .srt / .vtt：点击视频上的 CC';
 });
 
 $('subLangSelect')?.addEventListener('change', async () => {
@@ -457,13 +456,13 @@ loadState();
       br.storage.local.get('skipstream_stats').then(s => {
         const st = s.skipstream_stats || {};
         const lines = [
-          'Made by one person and a lot of skipped intros.',
-          'Tip: right-click CC on a video to fix subtitle timing. It is remembered per show.',
-          'Tip: Alt+Right skips the current segment, Alt+Z jumps back 15 s.',
-          'Psst: the Konami code works here and in Settings.',
+          '一个人和一屋子被跳过的片头做出来的。',
+          '提示：在视频上右键点击 CC 可校正字幕时间，按剧集分别记住。',
+          '提示：Alt+→ 立即跳过当前片段，Alt+Z 后退 15 秒。',
+          '小声说：在这里和设置页都能用科乐美秘技。',
         ];
-        if (st.skipsTotal) lines.push(st.skipsTotal + ' skips so far. The intro composers will never know.');
-        if (st.timeSavedSec >= 600) lines.push(Math.round(st.timeSavedSec / 60) + ' minutes saved. Go outside for some of them.');
+        if (st.skipsTotal) lines.push('到目前为止已跳过 ' + st.skipsTotal + ' 次。片头作曲者永远不会知道。');
+        if (st.timeSavedSec >= 600) lines.push('已节省 ' + Math.round(st.timeSavedSec / 60) + ' 分钟，分一点时间去外面走走吧。');
         const overlay = document.createElement('div');
         overlay.className = 'easter-egg-overlay';
         overlay.textContent = lines[Math.floor(Math.random() * lines.length)];

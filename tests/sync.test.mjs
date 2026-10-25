@@ -74,7 +74,7 @@ test('O2: Sync Now reads the cloud first and skips rows the cloud has newer', ()
   const iLoop = blk.indexOf('for (const [mediaId, entry] of entries)');
   assert.ok(iRead > 0 && iLoop > iRead, 'cloud read must precede the push loop');
   assert.ok(blk.includes('cloudTs[mediaId] >= localTs) continue;'));
-  assert.ok(blk.includes("throw new Error('cloud read failed"));
+  assert.ok(blk.includes("throw new Error('云端读取失败"));
 });
 
 test('O1: the cloud pull applies only allowlisted pref keys', () => {
