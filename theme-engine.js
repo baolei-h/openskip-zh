@@ -1,8 +1,8 @@
-/* SkipStream - OKLCH Dynamic Theme Engine */
+/* Video Sync - OKLCH Dynamic Theme Engine */
 'use strict';
 (function() {
   const br = globalThis.browser?.runtime?.id ? globalThis.browser : globalThis.chrome;
-  let currentSeed = '#57A860';
+  let currentSeed = '#4D6BFE';
   function systemMode() {
     try { return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'; }
     catch (e) { return 'dark'; }
@@ -32,7 +32,7 @@
   }
   function applyThemeFromSeed(hex, mode) {
     if (hex) {
-      if (!/^#[0-9a-fA-F]{6}$/.test(hex)) hex = '#57A860';
+      if (!/^#[0-9a-fA-F]{6}$/.test(hex)) hex = '#4D6BFE';
       currentSeed = hex;
     }
     hex = currentSeed;
@@ -110,9 +110,9 @@
     }
   }
   br.storage.local.get(['skipstream_seed_color', 'skipstream_theme']).then(data => {
-    applyThemeFromSeed(data.skipstream_seed_color || '#57A860', data.skipstream_theme || systemMode());
+    applyThemeFromSeed(data.skipstream_seed_color || '#4D6BFE', data.skipstream_theme || systemMode());
   }).catch(() => {
-    applyThemeFromSeed('#57A860', systemMode());
+    applyThemeFromSeed('#4D6BFE', systemMode());
   });
   window.applyThemeFromSeed = applyThemeFromSeed;
 })();
@@ -135,7 +135,7 @@
     if (!window.applyThemeFromSeed || !document.body || document.body.classList.contains('ss-party')) return;
     const theme = document.body.classList.contains('theme-light') ? 'light' : 'dark';
     const br = globalThis.browser && globalThis.browser.runtime && globalThis.browser.runtime.id ? globalThis.browser : globalThis.chrome;
-    const back = (seed) => { document.body.classList.remove('ss-party'); window.applyThemeFromSeed(seed || '#57A860', theme); };
+    const back = (seed) => { document.body.classList.remove('ss-party'); window.applyThemeFromSeed(seed || '#4D6BFE', theme); };
     document.body.classList.add('ss-party');
     let i = 0;
     const timer = setInterval(() => {

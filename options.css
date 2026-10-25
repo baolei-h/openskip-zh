@@ -1,5 +1,5 @@
 /* ============================================================
-   OpenSkip (SkipStream) - options.css
+   OpenSkip (Video Sync) - options.css
    Drop-in replacement for embedded <style> block
    Light + dark via CSS vars. Link AFTER removing <style> tag.
    ============================================================ */
@@ -1159,7 +1159,7 @@ a.btn-primary, a.btn-ghost{ display: inline-flex; align-items: center; justify-c
 .h-site{ display: inline-flex; align-items: center; gap: 5px; }
 .h-site-icon{ width: 14px; height: 14px; border-radius: 3px; object-fit: contain; flex-shrink: 0; }
 .h-site-letter{ display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; border-radius: 3px;
-  background: var(--accent, #57A860); color: #fff; font-size: 9px; font-weight: 700; flex-shrink: 0; }
+  background: var(--accent, #4D6BFE); color: #fff; font-size: 9px; font-weight: 700; flex-shrink: 0; }
 .sub-preview{ margin: 8px 0 12px; min-height: 92px; border-radius: 14px; display: flex; align-items: flex-end; justify-content: center;
   padding: 14px; background: linear-gradient(135deg, #2b3a55 0%, #8a6d3b 55%, #e9d8a6 100%); overflow: hidden; }
 .sub-preview span{ padding: 2px 8px; border-radius: 4px; text-align: center; line-height: 1.35; }

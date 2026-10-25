@@ -282,7 +282,7 @@ function hideSbSetup() { const box = $('sbSetup'); if (box) box.hidden = true; }
 $('sbCopySql')?.addEventListener('click', async () => {
   const st = $('sbSetupStatus'); const sql = await setupSql();
   try { await navigator.clipboard.writeText(sql); if (st) st.textContent = '脚本已复制。请在 Supabase SQL 编辑器中新建查询并粘贴，然后点击「运行」。'; }
-  catch (_) { if (st) st.textContent = '此处无法复制。请从 SkipStream 的 GitHub 页面打开 supabase_setup.sql。'; }
+  catch (_) { if (st) st.textContent = '此处无法复制。请从 Video Sync 的 GitHub 页面打开 supabase_setup.sql。'; }
 });
 $('sbRecheck')?.addEventListener('click', async () => {
   const st = $('sbSetupStatus'); if (st) st.textContent = 'Checking...';
@@ -304,14 +304,14 @@ function ssSystemMode() {
 
 // -- Apply dynamic theme on load --
 br.storage.local.get(['skipstream_seed_color', 'skipstream_theme']).then(data => {
-  if (window.applyThemeFromSeed) applyThemeFromSeed(data.skipstream_seed_color || '#57A860', data.skipstream_theme || ssSystemMode());
+  if (window.applyThemeFromSeed) applyThemeFromSeed(data.skipstream_seed_color || '#4D6BFE', data.skipstream_theme || ssSystemMode());
 }).catch(() => {});
 
 br.storage.onChanged.addListener((changes, area) => {
   if (area !== 'local') return;
   if (!changes.skipstream_seed_color && !changes.skipstream_theme) return;
   br.storage.local.get(['skipstream_seed_color', 'skipstream_theme']).then(d => {
-    if (window.applyThemeFromSeed) applyThemeFromSeed(d.skipstream_seed_color || '#57A860', d.skipstream_theme || ssSystemMode());
+    if (window.applyThemeFromSeed) applyThemeFromSeed(d.skipstream_seed_color || '#4D6BFE', d.skipstream_theme || ssSystemMode());
   }).catch(() => {});
 });
 
@@ -499,7 +499,7 @@ async function verifySupabase(url, key) {
     }
 
     if (r.status === 404 || r.status === 406) {
-      const sqlMsg = '已连接，但你的项目中还没有 SkipStream 的数据表。请先运行一次安装脚本（见下方）。';
+      const sqlMsg = '已连接，但你的项目中还没有 Video Sync 的数据表。请先运行一次安装脚本（见下方）。';
       setDot(dotMain, 'warn', '已连接，安装脚本尚未运行', msgMain);
       setDot(dotCard, 'warn');
       setNavDot('supabase', 'warn');
@@ -1605,7 +1605,7 @@ async function loadHistory(data) {
                 site_name:    entry.site_name || entry.site || '',
                 video_title:  entry.title || '',
                 page_url:     entry.url   || '',
-                device_name:  'SkipStream 设置同步',
+                device_name:  'Video Sync 设置同步',
                 ...(localTs ? { updated_at: new Date(Math.min(localTs, Date.now())).toISOString() } : {}),
               }
             });
@@ -1913,7 +1913,7 @@ const IMPORT_ERRORS = {
   need_passphrase: '该备份包含密钥与登录信息。请在上方输入它的口令，然后重新导入。未做任何改动。',
   wrong_passphrase: '口令不正确，未做任何改动。',
   bad_secrets: '该备份的密钥部分已损坏，未做任何改动。',
-  bad_file: '这不是 SkipStream 的备份文件，未做任何改动。',
+  bad_file: '这不是 Video Sync 的备份文件，未做任何改动。',
 };
 const importBtn  = $('importBtn');
 const importFile = $('importFile');
@@ -1956,7 +1956,7 @@ if (importBtn && importFile) {
 const clearBtn = $('clearBtn');
 if (clearBtn) {
   clearBtn.addEventListener('click', async () => {
-    if (!confirm('确定清除全部 SkipStream 数据？此操作无法撤销。')) return;
+    if (!confirm('确定清除全部 Video Sync 数据？此操作无法撤销。')) return;
     await br.storage.local.clear();
     try { await bgSend({ type: 'INVALIDATE_USER_ID' }); } catch (_) {}
     showAlert($('alert-export'), 'warn', '数据已全部清除。重新加载扩展即可从头开始。');
@@ -1966,8 +1966,8 @@ if (clearBtn) {
 
 function showWelcomeToast(returningUser) {
   const msg = returningUser
-    ? '欢迎回来！你的 SkipStream 服务已连接。'
-    : '欢迎使用 SkipStream — 在下方配置服务即可开始。';
+    ? '欢迎回来！你的 Video Sync 服务已连接。'
+    : '欢迎使用 Video Sync — 在下方配置服务即可开始。';
   const toast = document.createElement('div');
   toast.textContent = msg;
   Object.assign(toast.style, {

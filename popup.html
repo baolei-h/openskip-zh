@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>SkipStream</title>
+<title>Video Sync</title>
 <link rel="stylesheet" href="popup.css">
 </head>
 <body data-tab="status">
@@ -13,7 +13,7 @@
     <span class="logo" aria-hidden="true">
       <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3,2 13,8 3,14"/><line x1="13" y1="2" x2="13" y2="14"/></svg>
     </span>
-    <span class="header-title">SkipStream</span>
+    <span class="header-title">Video Sync</span>
     <span class="ver-badge" id="versionBadge"></span>
     <button class="icon-btn theme-btn" id="themeBtn" title="切换浅色/深色" aria-label="切换浅色或深色主题">
       <svg class="icon-sun" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="8" cy="8" r="3"/><line x1="8" y1="1" x2="8" y2="3"/><line x1="8" y1="13" x2="8" y2="15"/><line x1="1" y1="8" x2="3" y2="8"/><line x1="13" y1="8" x2="15" y2="8"/><line x1="3.05" y1="3.05" x2="4.46" y2="4.46"/><line x1="11.54" y1="11.54" x2="12.95" y2="12.95"/><line x1="12.95" y1="3.05" x2="11.54" y2="4.46"/><line x1="4.46" y1="11.54" x2="3.05" y2="12.95"/></svg>
@@ -40,11 +40,11 @@
 
     <div class="master-block" style="--i:1">
       <div class="master-info">
-        <h1 class="master-label">SkipStream</h1>
+        <h1 class="master-label">Video Sync</h1>
         <p class="master-sub" id="masterSub" aria-live="polite">加载中…</p>
       </div>
       <label class="toggle-lg">
-        <input type="checkbox" id="masterToggle" aria-label="启用 SkipStream">
+        <input type="checkbox" id="masterToggle" aria-label="启用 Video Sync">
         <span class="slider-lg"></span>
       </label>
     </div>
@@ -167,12 +167,12 @@
     <div class="skip-inner">
       <div class="skip-section" style="--i:4">
         <h2 class="skip-label">没有识别到视频？</h2>
-        <p class="tool-help">检查本页：查看 SkipStream 在每一帧里看到的内容。站点报告：播放器、流与字幕轨，可直接粘贴到问题反馈中。</p>
+        <p class="tool-help">检查本页：查看 Video Sync 在每一帧里看到的内容。站点报告：播放器、流与字幕轨，可直接粘贴到问题反馈中。</p>
         <div class="sub-row">
           <button class="sub-upload-btn" id="diagBtn">检查本页</button>
           <button class="sub-upload-btn" id="siteReportBtn">站点报告</button>
         </div>
-        <span class="sub-status" id="diagStatus" aria-live="polite" style="white-space:pre-line">列出每一帧，以及 SkipStream 能看到的视频。</span>
+        <span class="sub-status" id="diagStatus" aria-live="polite" style="white-space:pre-line">列出每一帧，以及 Video Sync 能看到的视频。</span>
         <textarea id="siteReportText" readonly spellcheck="false" aria-label="站点报告" style="display:none;width:100%;box-sizing:border-box;height:140px;margin-top:6px;font:11px/1.35 ui-monospace,Consolas,monospace;resize:vertical"></textarea>
         <button class="sub-upload-btn" id="siteReportCopy" style="display:none;margin-top:6px">复制报告</button>
       </div>
@@ -181,7 +181,7 @@
   </section>
 
 </div>
-<footer><a href="https://github.com/baolei-h/openskip-zh" target="_blank" rel="noopener">GitHub</a><span aria-hidden="true">·</span><a href="https://github.com/baolei-h/openskip-zh/blob/main/PRIVACY.md" target="_blank" rel="noopener">隐私</a><span aria-hidden="true">·</span><a href="#" id="sourcesLink">数据来源</a><span aria-hidden="true">·</span><a href="https://github.com/baolei-h/openskip-zh/issues" target="_blank" rel="noopener">反馈问题</a></footer>
+<footer><a href="https://github.com/baolei-h/video-sync" target="_blank" rel="noopener">GitHub</a><span aria-hidden="true">·</span><a href="https://github.com/baolei-h/video-sync/blob/main/PRIVACY.md" target="_blank" rel="noopener">隐私</a><span aria-hidden="true">·</span><a href="#" id="sourcesLink">数据来源</a><span aria-hidden="true">·</span><a href="https://github.com/baolei-h/video-sync/issues" target="_blank" rel="noopener">反馈问题</a></footer>
 <script src="theme-engine.js"></script>
 <script src="popup.js"></script>
 </body>

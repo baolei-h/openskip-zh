@@ -70,7 +70,7 @@ https.request = (o, cb) => {
 }
 
 test('listing only: notes of the current version, listing text, icon; nothing uploaded', () => {
-  const { code, out, calls } = fakeRun({ LISTING_ONLY: '1' }, { current_version: { id: 6543062, version: '1.13.1' }, icon_url: 'https://addons.mozilla.org/static-server/img/addon-icons/default-64.png' });
+  const { code, out, calls } = fakeRun({ LISTING_ONLY: '1' }, { current_version: { id: 6543062, version: '1.14.0' }, icon_url: 'https://addons.mozilla.org/static-server/img/addon-icons/default-64.png' });
   assert.equal(code, 0, out);
   const w = calls.filter((c) => c.m !== 'GET').map((c) => c.m + ' ' + c.p + ' ' + c.ct);
   assert.deepEqual(w, [
@@ -88,9 +88,9 @@ test('listing only: notes of the current version, listing text, icon; nothing up
 test('listing only: refuses when AMO shows another version; an icon already set is left alone', () => {
   const a = fakeRun({ LISTING_ONLY: '1' }, { current_version: { id: 1, version: '1.12.0' }, icon_url: 'https://addons.mozilla.org/user-media/addon_icons/3018/3018048-64.png' });
   assert.equal(a.code, 1);
-  assert.match(a.out, /AMO current version is 1\.12\.0, expected 1\.13\.1/);
+  assert.match(a.out, /AMO current version is 1\.12\.0, expected 1\.14\.0/);
   assert.equal(a.calls.filter((c) => c.m !== 'GET').length, 0);
-  const b = fakeRun({ LISTING_ONLY: '1' }, { current_version: { id: 6543062, version: '1.13.1' }, icon_url: 'https://addons.mozilla.org/user-media/addon_icons/3018/3018048-64.png' });
+  const b = fakeRun({ LISTING_ONLY: '1' }, { current_version: { id: 6543062, version: '1.14.0' }, icon_url: 'https://addons.mozilla.org/user-media/addon_icons/3018/3018048-64.png' });
   assert.equal(b.code, 0, b.out);
   assert.match(b.out, /icon already set/);
   assert.equal(b.calls.filter((c) => c.ct === 'multipart/form-data').length, 0);

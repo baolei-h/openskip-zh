@@ -1,4 +1,4 @@
-/* SkipStream - site report probe. Injected on request only (popup "Site report"),
+/* Video Sync - site report probe. Injected on request only (popup "Site report"),
    into every frame. Reads the page, sends nothing anywhere: the result goes back
    to the popup, which shows it and lets you copy it. Addresses are cut to host +
    path (no query strings, which can hold tokens). Every list is capped (CAP).
@@ -34,7 +34,7 @@
     sources: [], loaded: [], inScripts: [], lazyFrames: [], trackFiles: [], globals: [],
   };
   const CAP = 30;
-  // What SkipStream itself sees in this frame (same extension world).
+  // What Video Sync itself sees in this frame (same extension world).
   try { if (typeof window.__skipstream_diag === 'function') { const d = window.__skipstream_diag(); out.ss = JSON.parse(JSON.stringify(d)); } } catch { /* ok */ }
   const MEDIA_RE = /\.(?:m3u8|mpd|mp4|webm|mkv|vtt|srt|ass)(?:$|[?#])|\/(?:embed|e|v|player|play|stream|watch)\/|\/hls\/|\/dash\//i;
   const addTo = (list, seen, v) => { if (v && !seen.has(v) && list.length < CAP) { seen.add(v); list.push(v); } };

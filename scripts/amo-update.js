@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * SkipStream - AMO automation script
+ * Video Sync - AMO automation script
  *
  * Steps:
  *   1. Generates signed JWT for AMO API auth
@@ -69,7 +69,7 @@ function setup() {
   // Release notes
   RELEASE_NOTES = fitNotes(process.env.RELEASE_NOTES || extractChangelogNotes(VERSION), VERSION);
 
-  process.stdout.write(`\n🚀  SkipStream AMO Update - v${VERSION}\n`);
+  process.stdout.write(`\n🚀  Video Sync AMO Update - v${VERSION}\n`);
   process.stdout.write(LISTING_ONLY ? '    LISTING_ONLY=1 - no upload: notes, listing and icon\n' : `    ZIP:  ${ZIP_PATH}\n`);
   process.stdout.write(`    Slug: ${ADDON_SLUG}\n`);
   if (DRY_RUN) process.stdout.write('    DRY_RUN=1 - mutating calls will be skipped\n\n');
@@ -136,7 +136,7 @@ function apiRequest(method, urlPath, { json, formData, retries = 3 } = {}) {
         method,
         headers: {
           Authorization: `JWT ${jwt}`,
-          'User-Agent': `SkipStream-CI/1.0 (${ADDON_SLUG})`,
+          'User-Agent': `Video Sync-CI/1.0 (${ADDON_SLUG})`,
           Accept: 'application/json',
           ...(contentType ? { 'Content-Type': contentType } : {}),
           ...(body ? { 'Content-Length': body.length } : {}),
@@ -308,7 +308,7 @@ async function main() {
       const createRes = await apiRequest('POST', '/api/v5/addons/addon/', {
         json: {
           version: { upload: uploadUuid },
-          name:    { 'en-US': 'SkipStream' },
+          name:    { 'en-US': 'Video Sync' },
           slug:    ADDON_SLUG,
         },
       });
@@ -331,7 +331,7 @@ async function main() {
 }
 
 function done() {
-  process.stdout.write(`\n✅  Done - SkipStream v${VERSION} processed on AMO.\n`);
+  process.stdout.write(`\n✅  Done - Video Sync v${VERSION} processed on AMO.\n`);
   process.stdout.write(`    View: https://addons.mozilla.org/en-US/firefox/addon/${ADDON_SLUG}/\n\n`);
 }
 
@@ -402,7 +402,7 @@ const SUMMARY = 'Skips intros, recaps and credits on streaming sites. Continues 
 
 function buildListing() {
   return {
-    name:             { 'en-US': 'SkipStream' },
+    name:             { 'en-US': 'Video Sync' },
     summary:          { 'en-US': SUMMARY },
     description:      { 'en-US': buildDescription() },
     homepage:         { 'en-US': 'https://github.com/govinda-rajulu/openskip' },
@@ -416,12 +416,12 @@ function buildListing() {
 }
 
 function buildDescription() {
-  return `SkipStream skips intros, recaps and end credits on streaming sites. It also continues each video from the point where you stopped.
+  return `Video Sync skips intros, recaps and end credits on streaming sites. It also continues each video from the point where you stopped.
 
-What SkipStream does
+What Video Sync does
 
 • It skips intros, recaps, credits and previews. You can skip at once, or after a 3-second countdown with an Undo button.
-• It gets skip times from IntroDB, TheIntroDB, SkipDB, AniSkip and Anime Skip. Some sites have their own Skip button. SkipStream can push that button for you (Netflix, Prime Video, Disney+, Hulu, Max, Crunchyroll, Peacock, Paramount+, Apple TV+ and Tubi).
+• It gets skip times from IntroDB, TheIntroDB, SkipDB, AniSkip and Anime Skip. Some sites have their own Skip button. Video Sync can push that button for you (Netflix, Prime Video, Disney+, Hulu, Max, Crunchyroll, Peacock, Paramount+, Apple TV+ and Tubi).
 • On YouTube, it skips sponsor segments from SponsorBlock. You set each segment type to Auto, Ask or Off. It shows the segments on the progress bar.
 • It continues each video from your last position. A time in the address (for example ?t=90) has priority.
 • It shows subtitles from OpenSubtitles or from your own .srt or .vtt file. You can set the colour, font, background, edge and size.
@@ -439,7 +439,7 @@ You do not need an account or a key for skips, SponsorBlock and resume. Each of 
 
 Privacy
 
-SkipStream has no server. It sends nothing to its developer. It sends data only to the services in the privacy policy, and only for the reasons given there. Your keys stay in your browser. Your history goes to your own Supabase project only if you set one up. You can switch off technical data (device name, settings backup and stats) in the Firefox add-on settings.
+Video Sync has no server. It sends nothing to its developer. It sends data only to the services in the privacy policy, and only for the reasons given there. Your keys stay in your browser. Your history goes to your own Supabase project only if you set one up. You can switch off technical data (device name, settings backup and stats) in the Firefox add-on settings.
 
 Privacy policy: github.com/govinda-rajulu/openskip/blob/main/PRIVACY.md
 Source code: github.com/govinda-rajulu/openskip`;

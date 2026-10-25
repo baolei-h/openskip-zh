@@ -608,12 +608,12 @@ test('supabase: the setup script no longer makes ss_put_creds and drops it on ol
 });
 
 // ── Release 1.13.0 ────────────────────────────────────────────────────────────
-test('release: 1.13.1 in all 7 places and updates.json', () => {
-  const v = '1.13.1';
+test('release: 1.14.0 in all 7 places and updates.json', () => {
+  const v = '1.14.0';
   assert.equal(JSON.parse(read('manifest.json')).version, v);
   assert.equal(JSON.parse(read('manifest-chrome.json')).version, v);
-  assert.ok(read('popup.js').startsWith('/* SkipStream - popup v' + v + ' */'));
-  assert.ok(read('popup.css').startsWith('/* SkipStream popup - v' + v));
+  assert.ok(read('popup.js').startsWith('/* Video Sync - popup v' + v + ' */'));
+  assert.ok(read('popup.css').startsWith('/* Video Sync popup - v' + v));
   assert.ok(read('README.md').includes('version-' + v + '-green') && read('README.md').includes('releases/tag/v' + v));
   assert.match(read('CHANGELOG.md'), new RegExp('^# Changelog\\n\\n## \\[' + v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\] - 2026-10-25\\n'));
   const u = JSON.parse(read('updates.json')).addons['skipstream@extension'].updates;
@@ -806,7 +806,7 @@ test('page check: every frame answers, even if SkipStream stopped while starting
   assert.match(BG, /started: r\.started !== false, error: String\(r\.error \|\| ''\)\.slice\(0, 120\),/);
   const diagText = vm.runInNewContext('(' + extractFunction(read('popup.js'), 'diagText') + ')', { Array });
   const t = diagText({ ok: true, frames: [{ frame: 'www.viduki.net/1/movie/603', top: false, videos: 1, started: false, error: 'x is not defined' }] });
-  assert.ok(t.includes('SkipStream 在此框架中未能完成启动：x is not defined'), t);
+  assert.ok(t.includes('Video Sync 在此框架中未能完成启动：x is not defined'), t);
 });
 
 test('site report: each frame also shows what SkipStream itself sees, and the video position', () => {
@@ -820,7 +820,7 @@ test('site report: each frame also shows what SkipStream itself sees, and the vi
   assert.equal(r.videos[0].at, 612);
   const siteReportText = vm.runInNewContext('(' + extractFunction(read('popup.js'), 'siteReportText') + ')', { Array });
   const t = siteReportText({ ok: true, frames: [{ frame: 'www.viduki.net/1/movie/603', top: false, skipstream: true, ...r }] }, 'v1.13.0');
-  assert.ok(t.includes('  SkipStream：运行中，正在使用 1 个视频，识别为：movie tt0133093，跳过点：intro, outro'), t);
+  assert.ok(t.includes('  Video Sync：运行中，正在使用 1 个视频，识别为：movie tt0133093，跳过点：intro, outro'), t);
   assert.ok(t.includes('8181 秒，播放中，位于 612 秒'), t);
 });
 
@@ -830,7 +830,7 @@ test('subtitles: Netflix and Prime Video styles use their fonts only if the devi
   assert.match(_subLook({ font: 'prime' }).fontFamily, /^"Amazon Ember",.*sans-serif$/);
   const html = read('options.html');
   assert.ok(html.includes('<option value="netflix">流媒体：Netflix 风格</option>') && html.includes('<option value="prime">流媒体：Prime Video 风格</option>'));
-  assert.match(html, /SkipStream 无法内置/);
+  assert.match(html, /Video Sync 无法内置/);
   assert.doesNotMatch(read('manifest.json') + read('options.css'), /@font-face|fonts\.googleapis/, 'no font is downloaded');
 });
 

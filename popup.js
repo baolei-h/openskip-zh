@@ -1,4 +1,4 @@
-/* SkipStream - popup v1.13.1 */
+/* Video Sync - popup v1.14.0 */
 'use strict';
 
 const br = globalThis.browser?.runtime?.id ? globalThis.browser : globalThis.chrome;
@@ -33,7 +33,7 @@ if (verBadgeEl) verBadgeEl.textContent = 'v' + br.runtime.getManifest().version;
 
 // -- Theme: simple light/dark toggle, no system intermediate state --
 let currentTheme = ssSystemMode();
-let currentSeedHex = '#57A860';
+let currentSeedHex = '#4D6BFE';
 
 function applyTheme(t) {
   document.body.classList.remove('theme-light', 'theme-dark');
@@ -260,10 +260,10 @@ async function loadState() {
   const enabled  = data[KEYS.enabled] !== false;
   const mode     = modeFromPrefs(data);
   currentTheme   = data[KEYS.theme] || ssSystemMode();
-  currentSeedHex = data[KEYS.seedColor] || '#57A860';
+  currentSeedHex = data[KEYS.seedColor] || '#4D6BFE';
 
   applyTheme(currentTheme);
-  if (window.applyThemeFromSeed) applyThemeFromSeed(data[KEYS.seedColor] || '#57A860', currentTheme);
+  if (window.applyThemeFromSeed) applyThemeFromSeed(data[KEYS.seedColor] || '#4D6BFE', currentTheme);
   const mtEl = $('masterToggle');
   if (mtEl) mtEl.checked = enabled;
   $('masterSub').textContent = enabled ? '扩展已启用' : '扩展已暂停';
@@ -292,7 +292,7 @@ async function loadState() {
 // (Mozilla bug 1378527). Your own file goes in through the CC button on the video.
 const SUB_REASONS = {
   no_player:  '此标签页里没有找到视频播放器。请先开始播放，然后重试。',
-  no_id:      '无法识别这个视频。在设置里填写 TMDB 密钥可让 SkipStream 匹配片名，也可以点击视频上的 CC 按钮加载自己的字幕文件。',
+  no_id:      '无法识别这个视频。在设置里填写 TMDB 密钥可让 Video Sync 匹配片名，也可以点击视频上的 CC 按钮加载自己的字幕文件。',
   youtube:    'YouTube 视频不是电影或剧集，OpenSubtitles 没有可匹配的内容。请点击视频上的 CC 按钮加载你自己的字幕文件。',
   no_results: 'OpenSubtitles 上没有这部视频的对应语言或英文字幕。',
   navigated:  '搜索过程中页面发生了变化，请重试。',
@@ -322,7 +322,7 @@ $('subFetchBtn')?.addEventListener('click', async () => {
 function diagText(r) {
   if (!r || !r.ok) return '无法检查本页。请刷新页面后重试。';
   const f = Array.isArray(r.frames) ? r.frames : [];
-  if (!f.length) return 'SkipStream 没有在这个页面上运行。浏览器内置页面和扩展商店页面不允许注入脚本；其他网站请刷新页面。';
+  if (!f.length) return 'Video Sync 没有在这个页面上运行。浏览器内置页面和扩展商店页面不允许注入脚本；其他网站请刷新页面。';
   const lines = f.map(x => (x.top ? '页面 ' : '框架 ') + x.frame + '：' + x.videos + ' 个视频'
     + (x.hidden ? '，' + x.hidden + ' 个在播放器内部' : '')
     + (x.blankFrames ? '，' + x.blankFrames + ' 个空白画面' : '')
@@ -332,8 +332,8 @@ function diagText(r) {
     + (x.attached && x.auto ? '\n  模式：' + x.auto : '')
     + (x.attached && x.last ? '\n  上次跳过：' + x.last : '')
     + (x.attached && x.subs ? '\n  字幕：' + x.subs : '')
-    + (x.started === false ? '\n  SkipStream 在此框架中未能完成启动' + (x.error ? '：' + x.error : '') : (x.error ? '\n  错误：' + x.error : '')));
-  const head = f.some(x => x.attached) ? 'SkipStream 正在这里跟踪一个视频。'
+    + (x.started === false ? '\n  Video Sync 在此框架中未能完成启动' + (x.error ? '：' + x.error : '') : (x.error ? '\n  错误：' + x.error : '')));
+  const head = f.some(x => x.attached) ? 'Video Sync 正在这里跟踪一个视频。'
     : '还没有正在使用的视频。请先开始播放（影视站需要先选择片源），播放中再检查一次。';
   return head + '\n' + lines.join('\n');
 }
@@ -344,10 +344,10 @@ function diagText(r) {
 function siteReportText(r, version) {
   if (!r || !r.ok) return '无法读取本页' + (r && r.err ? '：' + r.err : '') + '。请刷新后重试。';
   const f = Array.isArray(r.frames) ? r.frames : [];
-  const L = ['SkipStream ' + (version || '') + ' 站点报告，共 ' + f.length + ' 个框架'];
+  const L = ['Video Sync ' + (version || '') + ' 站点报告，共 ' + f.length + ' 个框架'];
   for (const x of f) {
     L.push('');
-    L.push((x.top ? '页面 ' : '框架 ') + x.frame + (x.skipstream ? '' : '  [SkipStream 未在此运行]'));
+    L.push((x.top ? '页面 ' : '框架 ') + x.frame + (x.skipstream ? '' : '  [Video Sync 未在此运行]'));
     if (x.title) L.push('  标题：' + x.title);
     if (!x.top && x.referrer) L.push('  来源页：' + x.referrer);
     if (x.players && x.players.length) L.push('  播放器：' + x.players.join(', '));
@@ -358,7 +358,7 @@ function siteReportText(r, version) {
     }
     for (const fr of x.iframes || []) L.push('  内嵌框架 ' + fr.src + ' ' + fr.size + (fr.sandbox ? ' sandbox=' + fr.sandbox : ''));
     if (x.ids && x.ids.length) L.push('  标识：' + x.ids.join(', '));
-    if (x.ss) L.push('  SkipStream：' + (x.ss.started === false ? '未完成启动' : '运行中') + '，正在使用 ' + (Number(x.ss.attached) || 0) + ' 个视频'
+    if (x.ss) L.push('  Video Sync：' + (x.ss.started === false ? '未完成启动' : '运行中') + '，正在使用 ' + (Number(x.ss.attached) || 0) + ' 个视频'
       + (x.ss.ident ? '，识别为：' + x.ss.ident : '') + (x.ss.segs ? '，跳过点：' + x.ss.segs : '') + (x.ss.error ? '，错误：' + x.ss.error : ''));
     if (x.globals && x.globals.length) L.push('  页面播放器代码：' + x.globals.join(', '));
     const many = (head, list) => { if (list && list.length) { L.push('  ' + head + '（' + list.length + '）：'); for (const s of list) L.push('    ' + s); } };

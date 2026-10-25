@@ -111,6 +111,11 @@
           "version": "1.13.1",
           "update_link": "https://github.com/baolei-h/openskip-zh/releases/download/v1.13.1/skipstream-1.13.1-firefox.zip",
           "update_info_url": "https://github.com/baolei-h/openskip-zh/releases/tag/v1.13.1"
+        },
+        {
+          "version": "1.14.0",
+          "update_link": "https://github.com/baolei-h/video-sync/releases/download/v1.14.0/skipstream-1.14.0-firefox.zip",
+          "update_info_url": "https://github.com/baolei-h/video-sync/releases/tag/v1.14.0"
         }
       ]
     }

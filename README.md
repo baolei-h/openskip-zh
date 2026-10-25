@@ -1,13 +1,13 @@
-# SkipStream 中文版
+# Video Sync
 
 **自动跳过片头、前情回顾与片尾字幕，并从上次观看的位置继续。**
 
 [![Firefox](https://img.shields.io/badge/Firefox-Download-blue?logo=firefox)](../../releases/latest)
 [![Chrome](https://img.shields.io/badge/Chrome-Download-yellow?logo=googlechrome)](../../releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.13.1-green.svg)](https://github.com/govinda-rajulu/openskip/releases/tag/v1.13.1)
+[![Version](https://img.shields.io/badge/version-1.14.0-green.svg)](https://github.com/govinda-rajulu/openskip/releases/tag/v1.14.0)
 
-> 本仓库是 [govinda-rajulu/openskip](https://github.com/govinda-rajulu/openskip)（SkipStream 1.13.0）的**简体中文汉化版**：弹窗、设置页、页内提示与字幕菜单均已汉化，代码逻辑与上游保持一致。英文原文说明见 [README.en.md](README.en.md)。
+> Video Sync 是基于上游 [SkipStream](https://github.com/govinda-rajulu/openskip) 1.13.0 的**简体中文汉化版**：弹窗、设置页、页内提示与字幕菜单均已汉化，默认主题换成 DeepSeek 蓝，代码逻辑与上游保持一致。英文原文说明见 [README.en.md](README.en.md)。
 
 ---
 
@@ -17,7 +17,7 @@
 
 ### Chrome / Edge
 
-1. 下载 **`skipstream-1.13.1-chrome.zip`**（[最新版](../../releases/latest)）。
+1. 下载 **`skipstream-1.14.0-chrome.zip`**（[最新版](../../releases/latest)）。
 2. 解压到任意固定目录（解压后文件夹里应直接看到 `manifest.json`）。
 3. 打开 `chrome://extensions`（Edge 为 `edge://extensions`），打开右上角的「开发者模式」。
 4. 点「加载已解压的扩展程序」，选择第 2 步解压出的文件夹。
@@ -26,7 +26,7 @@
 
 ### Firefox
 
-1. 下载 **`skipstream-1.13.1-firefox.zip`**（[最新版](../../releases/latest)）。
+1. 下载 **`skipstream-1.14.0-firefox.zip`**（[最新版](../../releases/latest)）。
 2. 解压到任意目录。
 3. 打开 `about:debugging#/runtime/this-firefox` → 「临时载入附加组件」→ 选择解压目录里的 `manifest.json`。
 4. 临时载入在重启浏览器后失效，需要重新载入；要长期安装需使用签名版本（官方商店的英文原版，或自行用 AMO 账号签名）。
@@ -49,7 +49,7 @@
 
 数据写在你网盘的 `skipstream/sync.json`，扩展只读写这一个文件。目前只放行 `dav.jianguoyun.com`，其他 WebDAV（Nextcloud、NAS）需要先加域名。
 
-## SkipStream 能做什么
+## Video Sync 能做什么
 
 - **跳过**片头、前情回顾、片尾字幕与预告：可以立即跳过，也可以倒计时 3 秒后跳过并支持撤销。
 - **获取跳过时间点**：来自 [IntroDB](https://introdb.app)、[TheIntroDB](https://theintrodb.org)、[SkipDB](https://skipdb.tv)、[AniSkip](https://github.com/aniskip) 与 [Anime Skip](https://anime-skip.com)，也会读取页面播放器自带的章节信息。
@@ -60,7 +60,7 @@
 - **云同步**：把记录放进你自己的坚果云（WebDAV），两台电脑自动合并
 - **历史**：保留最近 300 个视频，带海报、站点名称与站点图标，可按站点和最后播放设备筛选；另有统计、按站点规则、倍速控制与可选的「自动下一集」。
 - **备份**：一个文件包含全部设置与历史；只有勾选时才会写入密钥，并由你的口令加密。
-- **弹窗工具**：「检查本页」与「站点报告」展示 SkipStream 的检测结果，反馈问题时可直接附上。
+- **弹窗工具**：「检查本页」与「站点报告」展示 Video Sync 的检测结果，反馈问题时可直接附上。
 - **主题**：浅色 / 深色，主题色可自定义。
 
 自动跳过或续播后默认**不显示**提示。需要「已跳过，撤销」或「已从…继续」时，在「设置 > 跳过」中打开。任何时候按 Alt+Z 都能撤销上一次自动跳过。
@@ -76,13 +76,13 @@
 | OpenSubtitles 账号 | 每天 20 次字幕下载（未登录 5 次） | [opensubtitles.com](https://www.opensubtitles.com) |
 | Anime Skip Client ID | 更多番剧跳过时间点 | [anime-skip.com](https://anime-skip.com/account/api-clients) |
 
-**Supabase：** 填项目 URL 与 publishable key（`sb_publishable_...`），旧版 anon key 也可用，切勿使用 secret key。设置页会提示如何在 Supabase 里运行一次 `supabase_setup.sql`；SkipStream 本身不会在你的项目里执行 SQL。
+**Supabase：** 填项目 URL 与 publishable key（`sb_publishable_...`），旧版 anon key 也可用，切勿使用 secret key。设置页会提示如何在 Supabase 里运行一次 `supabase_setup.sql`；Video Sync 本身不会在你的项目里执行 SQL。
 
-所有密钥都由使用者自备，SkipStream 不内置任何密钥。
+所有密钥都由使用者自备，Video Sync 不内置任何密钥。
 
 ## 数据来源
 
-SkipStream 使用以下服务。图标归各自所有者所有，仅用于标示数据来源，任何来源都不为 SkipStream 背书。
+Video Sync 使用以下服务。图标归各自所有者所有，仅用于标示数据来源，任何来源都不为 Video Sync 背书。
 
 | | 来源 | 提供内容 | 登录 |
 |---|---|---|---|
@@ -103,7 +103,7 @@ SkipStream 使用以下服务。图标归各自所有者所有，仅用于标示
 
 ## 隐私
 
-[PRIVACY.md](PRIVACY.md) 列出了每个服务以及会发送给它的数据。密钥只保存在你的浏览器里；只有你配置了 Supabase，历史才会写入你自己的项目。技术数据（设备名、设置备份与统计）可在 Firefox 扩展设置中关闭。SkipStream 没有广告，也不做跟踪。
+[PRIVACY.md](PRIVACY.md) 列出了每个服务以及会发送给它的数据。密钥只保存在你的浏览器里；只有你配置了 Supabase，历史才会写入你自己的项目。技术数据（设备名、设置备份与统计）可在 Firefox 扩展设置中关闭。Video Sync 没有广告，也不做跟踪。
 
 ## 文件结构
 
@@ -125,6 +125,6 @@ supabase_setup.sql                     一次性数据库安装脚本
 ## 汉化说明
 
 - 翻译范围：弹窗、设置页全部面板、页内跳过按钮与提示、字幕菜单、站点报告与诊断信息、扩展名称与描述。
-- 保留原文：品牌名 `SkipStream`、各项数据来源名称（如 IntroDB、TMDB、SponsorBlock）与服务地址，便于与上游文档对照。
+- 保留原文：品牌名 `Video Sync`、各项数据来源名称（如 IntroDB、TMDB、SponsorBlock）与服务地址，便于与上游文档对照。
 - 代码逻辑未改动，只调整界面文案，因此跳过、续播、同步等行为与上游 1.13.0 一致。
 - 汉化中的问题或措辞建议，欢迎在本仓库提 Issue。

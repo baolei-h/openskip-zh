@@ -1,4 +1,4 @@
-# Get SkipStream
+# Get Video Sync
 
 Hey! This was made just for you. Here's how to get it running 💜
 
@@ -14,11 +14,11 @@ Go to https://addons.mozilla.org/en-US/firefox/addon/skipstream/ and click "Add 
 4. Open your browser and go to `chrome://extensions` (or `edge://extensions` for Edge)
 5. Turn on "Developer mode" (toggle in the top-right corner)
 6. Click "Load unpacked" and select your unzipped folder
-7. Done! The puzzle piece icon in your toolbar is SkipStream
+7. Done! The puzzle piece icon in your toolbar is Video Sync
 
 ## Quick Setup (2 minutes)
 
-1. Click the SkipStream icon in your toolbar
+1. Click the Video Sync icon in your toolbar
 2. Click the ⚙️ gear icon to open Settings
 3. Under IntroDB: grab your free key at introdb.app (sign up, copy it, paste it in)
 4. That's all you NEED. Everything else is optional.

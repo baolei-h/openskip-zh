@@ -1,4 +1,4 @@
-/* SkipStream - content script */
+/* Video Sync - content script */
 (function () {
   'use strict';
 
@@ -51,12 +51,12 @@
   // ── Overlay palette: same OKLCH engine as theme-engine.js ──────────────────
   // Overlays sit on top of arbitrary video, so they derive their own surface
   // lightness from the seed rather than assuming the page is dark.
-  let _seedHex = '#57A860';
+  let _seedHex = '#4D6BFE';
   let _pal = null;
 
   function _hexToOklch(hex) {
     hex = String(hex || '').replace('#', '');
-    if (!/^[0-9a-fA-F]{6}$/.test(hex)) hex = '57A860';
+    if (!/^[0-9a-fA-F]{6}$/.test(hex)) hex = '4D6BFE';
     const r = parseInt(hex.slice(0, 2), 16) / 255;
     const g = parseInt(hex.slice(2, 4), 16) / 255;
     const b = parseInt(hex.slice(4, 6), 16) / 255;
@@ -659,7 +659,7 @@ function _pageUrl() {
         if (res.ok) {
           br.storage.local.set({ skipstream_last_sync: Date.now() }).catch(() => {});
         } else if (res.err !== 'not_configured') {
-          console.warn('[SkipStream] Cloud save failed:', res.err);
+          console.warn('[Video Sync] Cloud save failed:', res.err);
         }
       } catch { /* background not ready: the background's 5-minute sync sends it later */ }
   }
@@ -1261,7 +1261,7 @@ function _pageUrl() {
   }
 
   // ── Marks on any player's progress bar (1.13 round 4) ───────────────────
-  // Not tied to one player: SkipStream looks near the video for the element that
+  // Not tied to one player: Video Sync looks near the video for the element that
   // acts as the seek bar (a slider or a "progress / seek / timeline" element, as
   // wide as most of the video, low on it, not volume). Known class names from
   // popular players only add points. The marks are NOT put inside the player:
@@ -2432,7 +2432,7 @@ if (e.data?.type === MSG_DO && pendingSkipFn) { pendingSkipFn(); pendingSkipFn =
           const f = inp.files && inp.files[0];
           if (!f) { inp.remove(); return; }
           f.text().then(t => br.storage.local.set({ subtitle_override_srt: t }))
-           .catch(() => { console.warn('[SkipStream] subtitle file unreadable'); })
+           .catch(() => { console.warn('[Video Sync] subtitle file unreadable'); })
            .then(() => inp.remove());
         });
         inp.click();

@@ -1,4 +1,4 @@
-# SkipStream
+# Video Sync
 
 **Skips intros, recaps and credits. Continues each video where you stopped.**
 
@@ -26,20 +26,20 @@
 
 ---
 
-## What SkipStream does
+## What Video Sync does
 
 - **Skips** intros, recaps, credits and previews. It skips at once, or after a 3-second countdown with Undo.
 - **Gets skip times** from [IntroDB](https://introdb.app), [TheIntroDB](https://theintrodb.org), [SkipDB](https://skipdb.tv), [AniSkip](https://github.com/aniskip) and [Anime Skip](https://anime-skip.com). It also reads chapters that the page gives its player.
 - **Pushes the site's own Skip button** on Netflix, Prime Video, Disney+, Hulu, Max, Crunchyroll and more.
 - **YouTube:** skips [SponsorBlock](https://sponsor.ajay.app) segments. You set each type to Auto, Ask or Off. The segments show on the progress bar, also on m.youtube.com.
 - **Resumes** each video from your last position, also in embedded players. A time in the address (for example `?t=90`) has priority.
-- **Subtitles** from OpenSubtitles or from your own .srt or .vtt file. You can set the colour, font (9 styles, with Netflix and Prime Video styles), weight, background, letter edge and size, with a live preview in Settings. Right-click CC to fix the timing. SkipStream keeps the timing for each show.
+- **Subtitles** from OpenSubtitles or from your own .srt or .vtt file. You can set the colour, font (9 styles, with Netflix and Prime Video styles), weight, background, letter edge and size, with a live preview in Settings. Right-click CC to fix the timing. Video Sync keeps the timing for each show.
 - **History** keeps your last 300 videos, with posters, site names and site icons. You can filter it by site and by the device that played the video last. It also has stats, per-site rules, speed control and an optional "auto next episode".
 - **Backup:** one file with your settings and history. Keys are in the file only if you select this. Then your passphrase encrypts them.
-- **Popup tools:** "Check this page" and "Site report" show what SkipStream finds. Use them in bug reports.
+- **Popup tools:** "Check this page" and "Site report" show what Video Sync finds. Use them in bug reports.
 - **Theme:** light or dark, with any accent colour.
 
-After an automatic skip or a resume, SkipStream shows no message. To get "Skipped intro, Undo" or "Continued from", switch them on in Settings > Skipping. Alt+Z always undoes the last automatic skip.
+After an automatic skip or a resume, Video Sync shows no message. To get "Skipped intro, Undo" or "Continued from", switch them on in Settings > Skipping. Alt+Z always undoes the last automatic skip.
 
 ## Setup
 
@@ -52,13 +52,13 @@ You do not need an account or a key for skips, SponsorBlock and resume. Settings
 | OpenSubtitles account | 20 subtitle downloads each day, not 5 (VIP: more) | [opensubtitles.com](https://www.opensubtitles.com) |
 | Anime Skip client id | More anime skip times | [anime-skip.com](https://anime-skip.com/account/api-clients) |
 
-**Supabase:** use the project URL and the publishable key (`sb_publishable_...`). The legacy anon key also works. Never use a secret key. Settings then shows how to run `supabase_setup.sql` one time. SkipStream cannot run SQL in your project.
+**Supabase:** use the project URL and the publishable key (`sb_publishable_...`). The legacy anon key also works. Never use a secret key. Settings then shows how to run `supabase_setup.sql` one time. Video Sync cannot run SQL in your project.
 
-Every user brings their own keys. SkipStream ships no keys for these services.
+Every user brings their own keys. Video Sync ships no keys for these services.
 
 ## Sources
 
-SkipStream uses these services. Logos belong to their owners and show only where data comes from. None of them endorses SkipStream.
+Video Sync uses these services. Logos belong to their owners and show only where data comes from. None of them endorses Video Sync.
 
 | | Source | What it gives | Login |
 |---|---|---|---|
@@ -79,7 +79,7 @@ This product uses TMDB and the TMDB APIs but is not endorsed, certified or other
 
 ## Privacy
 
-[PRIVACY.md](PRIVACY.md) lists each service and the data that goes to it. Your keys stay in your browser. Your history goes to your own Supabase project only if you set one up. You can switch off technical data (device name, settings backup and stats) in the Firefox add-on settings. SkipStream has no ads and no tracking.
+[PRIVACY.md](PRIVACY.md) lists each service and the data that goes to it. Your keys stay in your browser. Your history goes to your own Supabase project only if you set one up. You can switch off technical data (device name, settings backup and stats) in the Firefox add-on settings. Video Sync has no ads and no tracking.
 
 ## Files
 

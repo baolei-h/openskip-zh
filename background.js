@@ -1,4 +1,4 @@
-/* SkipStream - background */
+/* Video Sync - background */
 /* Compatible with Firefox MV2 and Chrome MV3 service workers */
 'use strict';
 
@@ -1199,7 +1199,7 @@ async function checkSupabase(supabaseUrl, supabaseAnonKey) {
 // ── OpenSubtitles ─────────────────────────────────────────────────────────────
 
 const OSUB_API_KEY   = 'bBSwDAWRcnDjnw12mKLGHHu0SMSAUL34';
-const OSUB_UA        = 'SkipStream v' + (br.runtime?.getManifest?.()?.version || 'dev');
+const OSUB_UA        = 'Video Sync v' + (br.runtime?.getManifest?.()?.version || 'dev');
 const OSUB_SESS_KEY  = 'osub_session';
 const OSUB_SUB_CACHE = 'osub_sub_cache'; // file_id → srt text, capped 20 entries and OSUB_CACHE_CHARS
 const OSUB_CACHE_CHARS = 2000000;         // about 2 MB of text; storage is shared with history and settings

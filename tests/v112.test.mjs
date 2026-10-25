@@ -151,7 +151,7 @@ test('site report: the popup turns frames into readable lines', () => {
     { frame: 'vidsrc.example/embed/movie/603', top: false, skipstream: false, referrer: 'www.1shows.bz/', players: ['JW Player'], libs: ['hls.js (cdn.example)'],
       videos: [{ size: '1280x720', kind: 'stream (HLS/DASH via script)', source: 'blob (stream built in the page)', duration: 8160, playing: true, tracks: ['subtitles:en English showing'] }], iframes: [], ids: ['tmdb 603'] },
   ] }, 'v1.12.0');
-  for (const want of ['SkipStream v1.12.0 站点报告，共 2 个框架', '内嵌框架 vidsrc.example/embed/movie/603 1280x720', '框架 vidsrc.example/embed/movie/603  [SkipStream 未在此运行]',
+  for (const want of ['Video Sync v1.12.0 站点报告，共 2 个框架', '内嵌框架 vidsrc.example/embed/movie/603 1280x720', '框架 vidsrc.example/embed/movie/603  [Video Sync 未在此运行]',
     '播放器：JW Player', '脚本：hls.js (cdn.example)', '视频 1280x720，stream (HLS/DASH via script)', '字幕轨：subtitles:en English showing', '标识：tmdb 603'])
     assert.ok(t.includes(want), want + '\n---\n' + t);
 });

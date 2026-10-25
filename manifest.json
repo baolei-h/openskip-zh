@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "SkipStream 中文版",
+  "name": "Video Sync",
   "description": "跳过片头、前情回顾与片尾字幕，并从上次观看的位置继续。可选同步到你自己的 Supabase 项目。",
-  "version": "1.13.1",
+  "version": "1.14.0",
   "icons": {
     "16": "icons/icon-16.png",
     "48": "icons/icon-48.png",
@@ -23,7 +23,7 @@
     "persistent": false
   },
   "browser_action": {
-    "default_title": "SkipStream 中文版",
+    "default_title": "Video Sync",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon-16.png",
@@ -72,7 +72,7 @@
       "suggested_key": {
         "default": "Alt+S"
       },
-      "description": "打开 SkipStream 弹窗"
+      "description": "打开 Video Sync 弹窗"
     }
   }
 }
